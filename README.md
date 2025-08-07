@@ -1,8 +1,8 @@
-# Streamflow
+# FluxGraph
 
 🌊 **Real-time graph-based stream processing for Cloudflare Workers and Durable Objects**
 
-Streamflow is a lightweight, high-performance stream processing library designed specifically for edge computing environments. Build complex data processing pipelines that run directly on Cloudflare's global network.
+FluxGraph is a lightweight, high-performance stream processing library designed specifically for edge computing environments. Build complex data processing pipelines that run directly on Cloudflare's global network.
 
 ## Features
 
@@ -17,13 +17,13 @@ Streamflow is a lightweight, high-performance stream processing library designed
 ## Installation
 
 ```bash
-npm install @streamflow/core
+npm install @fluxgraph/core
 ```
 
 ## Quick Start
 
 ```typescript
-import { Graph, nodes } from '@streamflow/core';
+import { Graph, nodes } from '@fluxgraph/core';
 
 // Define your graph
 const graph = new Graph({

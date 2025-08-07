@@ -1,5 +1,5 @@
 /**
- * Example showing RxJS-powered stream processing with Streamflow
+ * Example showing RxJS-powered stream processing with FluxGraph
  */
 
 import { 
@@ -36,7 +36,7 @@ import {
   tap
 } from 'rxjs/operators';
 
-import { RxGraphRunner } from '@streamflow/core';
+import { RxGraphRunner } from '@fluxgraph/core';
 
 /**
  * Example 1: Real-time Financial Transaction Processing

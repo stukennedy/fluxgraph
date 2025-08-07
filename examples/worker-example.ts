@@ -2,8 +2,8 @@
  * Example Cloudflare Worker using Streamflow
  */
 
-import { Graph, GraphBuilder, nodes, templates } from '@streamflow/core';
-import { DurableObjectStorage, saveGraphState, loadGraphState } from '@streamflow/core/utils';
+import { Graph, GraphBuilder, nodes, templates } from '@fluxgraph/core';
+import { DurableObjectStorage, saveGraphState, loadGraphState } from '@fluxgraph/core/utils';
 
 // Durable Object for stream processing
 export class StreamProcessor implements DurableObject {
