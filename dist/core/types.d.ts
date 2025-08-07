@@ -54,6 +54,7 @@ export interface SinkNodeConfig extends NodeConfig {
         table?: string;
         method?: string;
         format?: 'json' | 'text' | 'binary';
+        callback?: (packet: DataPacket) => void | Promise<void>;
     };
 }
 export interface MergeNodeConfig extends NodeConfig {

@@ -1,6 +1,6 @@
 {
   "name": "@fluxgraph/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Real-time graph-based stream processing for Cloudflare Workers and Durable Objects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

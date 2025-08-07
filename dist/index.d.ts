@@ -5,6 +5,7 @@
  */
 export { GraphRunner as Graph } from '@/core/GraphRunner';
 export * from '@/core/types';
+export type { GraphDefinition } from '@/core/types';
 export { BaseNode } from '@/nodes/BaseNode';
 export { SourceNode } from '@/nodes/SourceNode';
 export { TransformNode, TransformFunctions } from '@/nodes/TransformNode';

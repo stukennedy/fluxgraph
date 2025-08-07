@@ -66,7 +66,10 @@ export class SinkNode extends BaseNode {
                 this.outputToLog(data);
                 break;
             case 'custom':
-                // Custom sinks would be handled by subscribers
+                // Call the custom callback function
+                if (this.config.config.callback && typeof this.config.config.callback === 'function') {
+                    await this.config.config.callback(packet);
+                }
                 break;
         }
     }
