@@ -1,4 +1,4 @@
-import { GraphDefinition } from "../core/types";
+import { GraphDefinition } from "@/core/types";
 /**
  * IoT sensor data processing template
  */

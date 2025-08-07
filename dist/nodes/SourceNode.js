@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode';
+import { BaseNode } from '@/nodes/BaseNode';
 /**
  * Source node - generates data packets from various sources
  */
@@ -60,7 +60,7 @@ export class SourceNode extends BaseNode {
         this.intervalId = setInterval(async () => {
             const packet = this.createPacket({
                 timestamp: Date.now(),
-                source: 'timer'
+                source: 'timer',
             });
             await this.emit(packet);
         }, interval);
@@ -78,12 +78,10 @@ export class SourceNode extends BaseNode {
         };
         this.websocket.onmessage = async (event) => {
             try {
-                const data = typeof event.data === 'string'
-                    ? JSON.parse(event.data)
-                    : event.data;
+                const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
                 const packet = this.createPacket(data, {
                     source: 'websocket',
-                    url
+                    url,
                 });
                 await this.emit(packet);
             }
@@ -120,7 +118,7 @@ export class SourceNode extends BaseNode {
                 const packet = this.createPacket(data, {
                     source: 'http',
                     url,
-                    statusCode: response.status
+                    statusCode: response.status,
                 });
                 await this.emit(packet);
             }
@@ -152,9 +150,9 @@ export class SourceNode extends BaseNode {
                 const packet = this.createPacket({
                     query,
                     timestamp: Date.now(),
-                    message: 'Database polling not yet implemented'
+                    message: 'Database polling not yet implemented',
                 }, {
-                    source: 'database'
+                    source: 'database',
                 });
                 await this.emit(packet);
             }
@@ -198,8 +196,8 @@ export class SourceNode extends BaseNode {
             metadata: {
                 ...metadata,
                 nodeId: this.config.id,
-                nodeType: 'source'
-            }
+                nodeType: 'source',
+            },
         };
     }
 }

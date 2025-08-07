@@ -1,1 +1,1 @@
-{"version":3,"file":"analytics.d.ts","sourceRoot":"","sources":["../../src/templates/analytics.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,eAAe,CAAC;AAGhD;;;GAGG;AACH,eAAO,MAAM,iBAAiB,EAAE,eA6F/B,CAAC;AAEF,eAAe,iBAAiB,CAAC"}
+{"version":3,"file":"analytics.d.ts","sourceRoot":"","sources":["../../src/templates/analytics.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,cAAc,CAAC;AAG/C;;;GAGG;AACH,eAAO,MAAM,iBAAiB,EAAE,eA6F/B,CAAC;AAEF,eAAe,iBAAiB,CAAC"}

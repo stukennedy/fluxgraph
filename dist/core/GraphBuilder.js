@@ -1,4 +1,4 @@
-import { GraphRunner } from './GraphRunner';
+import { GraphRunner } from '@/core/GraphRunner';
 /**
  * Fluent builder API for creating graphs
  */

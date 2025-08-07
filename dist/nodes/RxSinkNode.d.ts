@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { RxBaseNode } from './RxBaseNode';
-import { SinkNodeConfig, DataPacket } from '../core/types';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { SinkNodeConfig, DataPacket } from '@/core/types';
 /**
  * RxJS-based Sink node
  */

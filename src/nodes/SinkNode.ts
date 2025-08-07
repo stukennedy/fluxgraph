@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { SinkNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { SinkNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Sink node - outputs data to external systems
@@ -36,7 +36,7 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
   protected async onStop(): Promise<void> {
     // Final flush
     await this.flush();
-    
+
     // Close connections
     if (this.websocket) {
       this.websocket.close();
@@ -47,7 +47,7 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
   protected async processPacket(packet: DataPacket): Promise<DataPacket | null> {
     try {
       await this.output(packet);
-      
+
       // Sinks don't pass data through by default
       // but we can return the packet for chaining
       return packet;
@@ -67,19 +67,19 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
       case 'websocket':
         await this.outputToWebSocket(data);
         break;
-      
+
       case 'http':
         await this.outputToHttp(data);
         break;
-      
+
       case 'database':
         await this.outputToDatabase(data);
         break;
-      
+
       case 'log':
         this.outputToLog(data);
         break;
-      
+
       case 'custom':
         // Custom sinks would be handled by subscribers
         break;
@@ -91,18 +91,18 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
    */
   private formatData(packet: DataPacket): any {
     const format = this.config.config.format || 'json';
-    
+
     switch (format) {
       case 'json':
         return JSON.stringify(packet.data);
-      
+
       case 'text':
         return String(packet.data);
-      
+
       case 'binary':
         // Convert to binary format
         return packet.data;
-      
+
       default:
         return packet.data;
     }
@@ -119,7 +119,7 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
 
     this.websocket.onopen = () => {
       console.log(`Sink WebSocket connected: ${url}`);
-      
+
       // Flush any buffered data
       this.flush();
     };
@@ -131,7 +131,7 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
 
     this.websocket.onclose = () => {
       console.log(`Sink WebSocket disconnected: ${url}`);
-      
+
       // Attempt to reconnect if still running
       if (this.status === 'running') {
         setTimeout(() => this.connectWebSocket(), 5000);
@@ -158,15 +158,15 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
   private async outputToHttp(data: any): Promise<void> {
     const url = this.config.config.url;
     const method = this.config.config.method || 'POST';
-    
+
     if (!url) throw new Error('HTTP URL is required');
 
     const response = await fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: typeof data === 'string' ? data : JSON.stringify(data)
+      body: typeof data === 'string' ? data : JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -183,9 +183,9 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
     this.outputBuffer.push({
       table: this.config.config.table,
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     // Schedule flush if buffer is getting full
     if (this.outputBuffer.length >= 100) {
       await this.flush();
@@ -232,7 +232,7 @@ export class SinkNode extends BaseNode<SinkNodeConfig> {
 
     this.flushTimer = setTimeout(() => {
       this.flush();
-      
+
       // Schedule next flush if still running
       if (this.status === 'running') {
         this.scheduleFlush();
@@ -255,8 +255,8 @@ export class SinkConfigurations {
       name,
       sinkType: 'log',
       config: {
-        format: 'json'
-      }
+        format: 'json',
+      },
     };
   }
 
@@ -271,8 +271,8 @@ export class SinkConfigurations {
       sinkType: 'websocket',
       config: {
         url,
-        format: 'json'
-      }
+        format: 'json',
+      },
     };
   }
 
@@ -288,8 +288,8 @@ export class SinkConfigurations {
       config: {
         url,
         method,
-        format: 'json'
-      }
+        format: 'json',
+      },
     };
   }
 
@@ -304,8 +304,8 @@ export class SinkConfigurations {
       sinkType: 'database',
       config: {
         table,
-        format: 'json'
-      }
+        format: 'json',
+      },
     };
   }
 

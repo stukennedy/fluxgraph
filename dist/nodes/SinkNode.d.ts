@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { SinkNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { SinkNodeConfig, DataPacket } from '@/core/types';
 /**
  * Sink node - outputs data to external systems
  */

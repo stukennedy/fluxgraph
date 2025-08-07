@@ -1,7 +1,7 @@
-import { GraphBuilder } from "../core/GraphBuilder";
-import { nodes } from "../core/NodeBuilder";
-import { TransformFunctions } from "../nodes/TransformNode";
-import { js } from "../utils";
+import { GraphBuilder } from "@/core/GraphBuilder";
+import { nodes } from "@/core/NodeBuilder";
+import { TransformFunctions } from "@/nodes/TransformNode";
+import { js } from "@/utils";
 /**
  * Create an anomaly detector for financial transactions
  */

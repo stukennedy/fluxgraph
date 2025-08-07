@@ -1,4 +1,4 @@
-import { js } from "../utils";
+import { js } from "@/utils";
 /**
  * Analytics pipeline template
  * Processes events for real-time analytics

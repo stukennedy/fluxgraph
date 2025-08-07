@@ -1,21 +1,11 @@
-import { 
-  GraphDefinition, 
-  GraphState, 
-  GraphContext,
-  GraphEvent,
-  GraphEventType,
-  DataPacket,
-  GraphSubscription,
-  NodeState,
-  AnyNodeConfig
-} from './types';
+import { GraphDefinition, GraphState, GraphContext, GraphEvent, GraphEventType, DataPacket, GraphSubscription, NodeState, AnyNodeConfig } from './types';
 
-import { BaseNode } from '../nodes/BaseNode';
-import { SourceNode } from '../nodes/SourceNode';
-import { TransformNode } from '../nodes/TransformNode';
-import { FilterNode } from '../nodes/FilterNode';
-import { AggregateNode } from '../nodes/AggregateNode';
-import { SinkNode } from '../nodes/SinkNode';
+import { BaseNode } from '@/nodes/BaseNode';
+import { SourceNode } from '@/nodes/SourceNode';
+import { TransformNode } from '@/nodes/TransformNode';
+import { FilterNode } from '@/nodes/FilterNode';
+import { AggregateNode } from '@/nodes/AggregateNode';
+import { SinkNode } from '@/nodes/SinkNode';
 
 /**
  * Main GraphRunner class
@@ -32,7 +22,7 @@ export class GraphRunner {
 
   constructor(definition: GraphDefinition) {
     this.definition = definition;
-    
+
     // Initialize context
     this.context = {
       graphId: definition.id,
@@ -45,8 +35,8 @@ export class GraphRunner {
         packetsDropped: 0,
         packetsErrored: 0,
         totalLatency: 0,
-        nodeMetrics: {}
-      }
+        nodeMetrics: {},
+      },
     };
 
     // Initialize state
@@ -57,7 +47,7 @@ export class GraphRunner {
       status: 'idle',
       nodeStates: {},
       createdAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
   }
 
@@ -70,13 +60,13 @@ export class GraphRunner {
       for (const nodeConfig of this.definition.nodes) {
         const node = this.createNode(nodeConfig);
         this.nodes.set(nodeConfig.id, node);
-        
+
         // Initialize node state
         this.state.nodeStates[nodeConfig.id] = {
           nodeId: nodeConfig.id,
           status: 'idle',
           buffer: [],
-          metrics: node.getMetrics()
+          metrics: node.getMetrics(),
         };
       }
 
@@ -84,7 +74,7 @@ export class GraphRunner {
       for (const edge of this.definition.edges) {
         const fromNode = this.nodes.get(edge.from);
         const toNode = this.nodes.get(edge.to);
-        
+
         if (!fromNode || !toNode) {
           throw new Error(`Invalid edge: ${edge.from} -> ${edge.to}`);
         }
@@ -108,7 +98,7 @@ export class GraphRunner {
       }
 
       // Initialize all nodes
-      const initPromises = Array.from(this.nodes.values()).map(node => node.initialize());
+      const initPromises = Array.from(this.nodes.values()).map((node) => node.initialize());
       await Promise.all(initPromises);
 
       // Set up error handlers
@@ -121,9 +111,8 @@ export class GraphRunner {
       this.emitEvent({
         type: 'graph:started',
         timestamp: Date.now(),
-        graphId: this.definition.id
+        graphId: this.definition.id,
       });
-
     } catch (error) {
       this.state.status = 'error';
       throw error;
@@ -140,7 +129,7 @@ export class GraphRunner {
     this.state.updatedAt = Date.now();
 
     // Start all nodes
-    const startPromises = Array.from(this.nodes.values()).map(node => node.start());
+    const startPromises = Array.from(this.nodes.values()).map((node) => node.start());
     await Promise.all(startPromises);
 
     // Start metrics collection
@@ -149,7 +138,7 @@ export class GraphRunner {
     this.emitEvent({
       type: 'graph:started',
       timestamp: Date.now(),
-      graphId: this.definition.id
+      graphId: this.definition.id,
     });
   }
 
@@ -163,7 +152,7 @@ export class GraphRunner {
     this.state.updatedAt = Date.now();
 
     // Pause all nodes
-    const pausePromises = Array.from(this.nodes.values()).map(node => node.pause());
+    const pausePromises = Array.from(this.nodes.values()).map((node) => node.pause());
     await Promise.all(pausePromises);
 
     // Stop metrics collection
@@ -180,7 +169,7 @@ export class GraphRunner {
     this.state.updatedAt = Date.now();
 
     // Resume all nodes
-    const resumePromises = Array.from(this.nodes.values()).map(node => node.resume());
+    const resumePromises = Array.from(this.nodes.values()).map((node) => node.resume());
     await Promise.all(resumePromises);
 
     // Resume metrics collection
@@ -195,7 +184,7 @@ export class GraphRunner {
     this.state.updatedAt = Date.now();
 
     // Stop all nodes
-    const stopPromises = Array.from(this.nodes.values()).map(node => node.stop());
+    const stopPromises = Array.from(this.nodes.values()).map((node) => node.stop());
     await Promise.all(stopPromises);
 
     // Stop metrics collection
@@ -204,7 +193,7 @@ export class GraphRunner {
     this.emitEvent({
       type: 'graph:stopped',
       timestamp: Date.now(),
-      graphId: this.definition.id
+      graphId: this.definition.id,
     });
   }
 
@@ -213,7 +202,7 @@ export class GraphRunner {
    */
   async inject(nodeId: string, data: any, metadata?: Record<string, any>): Promise<void> {
     const node = this.nodes.get(nodeId);
-    
+
     if (!node) {
       throw new Error(`Node ${nodeId} not found`);
     }
@@ -228,21 +217,17 @@ export class GraphRunner {
   /**
    * Subscribe to node output
    */
-  subscribe(
-    nodeId: string, 
-    callback: (packet: DataPacket) => void | Promise<void>,
-    filter?: string
-  ): string {
+  subscribe(nodeId: string, callback: (packet: DataPacket) => void | Promise<void>, filter?: string): string {
     const node = this.nodes.get(nodeId);
-    
+
     if (!node) {
       throw new Error(`Node ${nodeId} not found`);
     }
 
     const subscriptionId = `sub-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-    
+
     // Create filtered callback if filter is provided
-    const filteredCallback = filter 
+    const filteredCallback = filter
       ? async (packet: DataPacket) => {
           const shouldPass = await this.evaluateCondition(filter, packet);
           if (shouldPass) {
@@ -259,7 +244,7 @@ export class GraphRunner {
       id: subscriptionId,
       nodeId,
       filter,
-      callback: filteredCallback
+      callback: filteredCallback,
     });
 
     // Return unsubscribe function
@@ -300,7 +285,7 @@ export class GraphRunner {
         nodeId,
         status: node.getStatus(),
         buffer: [],
-        metrics: node.getMetrics()
+        metrics: node.getMetrics(),
       };
     });
 
@@ -321,7 +306,7 @@ export class GraphRunner {
     this.nodes.forEach((node, nodeId) => {
       const metrics = node.getMetrics();
       nodeMetrics[nodeId] = metrics;
-      
+
       totalPacketsProcessed += metrics.packetsIn;
       totalPacketsDropped += metrics.packetsDropped;
       totalPacketsErrored += metrics.packetsErrored;
@@ -333,7 +318,7 @@ export class GraphRunner {
       packetsDropped: totalPacketsDropped,
       packetsErrored: totalPacketsErrored,
       totalLatency: totalLatency / Math.max(totalPacketsProcessed, 1),
-      nodeMetrics
+      nodeMetrics,
     };
   }
 
@@ -391,10 +376,10 @@ export class GraphRunner {
     try {
       const fn = new Function('packet', 'context', transform);
       const transformedData = await Promise.resolve(fn(packet, this.context));
-      
+
       return {
         ...packet,
-        data: transformedData
+        data: transformedData,
       };
     } catch (error) {
       console.error(`Error applying transformation: ${error}`);
@@ -414,7 +399,7 @@ export class GraphRunner {
       graphId: this.definition.id,
       nodeId,
       packetId: packet?.id,
-      error
+      error,
     });
 
     // Update metrics
@@ -422,7 +407,7 @@ export class GraphRunner {
 
     // Handle error based on strategy
     const errorStrategy = this.definition.config?.errorStrategy || 'continue';
-    
+
     if (errorStrategy === 'stop') {
       this.stop();
     }
@@ -434,7 +419,7 @@ export class GraphRunner {
   private emitEvent(event: GraphEvent): void {
     const listeners = this.eventListeners.get(event.type);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(event);
         } catch (error) {

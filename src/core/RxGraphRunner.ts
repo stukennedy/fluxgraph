@@ -1,13 +1,4 @@
-import {
-  Observable,
-  Subject,
-  BehaviorSubject,
-  merge,
-  combineLatest,
-  from,
-  of,
-  EMPTY
-} from "rxjs";
+import { Observable, Subject, BehaviorSubject, merge, combineLatest, from, of, EMPTY } from 'rxjs';
 import {
   filter,
   map,
@@ -23,25 +14,17 @@ import {
   startWith,
   distinctUntilChanged,
   debounceTime,
-  throttleTime
-} from "rxjs/operators";
+  throttleTime,
+} from 'rxjs/operators';
 
-import {
-  GraphDefinition,
-  GraphState,
-  GraphContext,
-  GraphEvent,
-  GraphMetrics,
-  DataPacket,
-  AnyNodeConfig
-} from "./types";
+import { GraphDefinition, GraphState, GraphContext, GraphEvent, GraphMetrics, DataPacket, AnyNodeConfig } from './types';
 
-import { RxBaseNode } from "../nodes/RxBaseNode";
-import { RxTransformNode } from "../nodes/RxTransformNode";
-import { RxSourceNode } from "../nodes/RxSourceNode";
-import { RxSinkNode } from "../nodes/RxSinkNode";
-import { RxFilterNode } from "../nodes/RxFilterNode";
-import { RxAggregateNode } from "../nodes/RxAggregateNode";
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { RxTransformNode } from '@/nodes/RxTransformNode';
+import { RxSourceNode } from '@/nodes/RxSourceNode';
+import { RxSinkNode } from '@/nodes/RxSinkNode';
+import { RxFilterNode } from '@/nodes/RxFilterNode';
+import { RxAggregateNode } from '@/nodes/RxAggregateNode';
 
 /**
  * RxJS-based Graph Runner
@@ -54,13 +37,13 @@ export class RxGraphRunner {
 
   // State management
   private state$ = new BehaviorSubject<GraphState>({
-    graphId: "",
+    graphId: '',
     definition: {} as GraphDefinition,
     context: {} as GraphContext,
-    status: "idle",
+    status: 'idle',
     nodeStates: {},
     createdAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   });
 
   // Event streams
@@ -80,10 +63,10 @@ export class RxGraphRunner {
       graphId: definition.id,
       definition,
       context: this.createInitialContext(),
-      status: "idle",
+      status: 'idle',
       nodeStates: {},
       createdAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     });
 
     // Set up metrics aggregation
@@ -109,15 +92,15 @@ export class RxGraphRunner {
       this.setupErrorHandling();
 
       // Update state
-      this.updateState({ status: "idle" });
+      this.updateState({ status: 'idle' });
 
       this.emitEvent({
-        type: "graph:started",
+        type: 'graph:started',
         timestamp: Date.now(),
-        graphId: this.definition.id
+        graphId: this.definition.id,
       });
     } catch (error) {
-      this.updateState({ status: "error" });
+      this.updateState({ status: 'error' });
       throw error;
     }
   }
@@ -169,19 +152,17 @@ export class RxGraphRunner {
    * Start graph execution
    */
   async start(): Promise<void> {
-    if (this.state$.value.status === "running") return;
+    if (this.state$.value.status === 'running') return;
 
     // Start all nodes
-    await Promise.all(
-      Array.from(this.nodes.values()).map((node) => node.start())
-    );
+    await Promise.all(Array.from(this.nodes.values()).map((node) => node.start()));
 
-    this.updateState({ status: "running" });
+    this.updateState({ status: 'running' });
 
     this.emitEvent({
-      type: "graph:started",
+      type: 'graph:started',
       timestamp: Date.now(),
-      graphId: this.definition.id
+      graphId: this.definition.id,
     });
   }
 
@@ -189,42 +170,36 @@ export class RxGraphRunner {
    * Pause graph execution
    */
   async pause(): Promise<void> {
-    if (this.state$.value.status !== "running") return;
+    if (this.state$.value.status !== 'running') return;
 
-    await Promise.all(
-      Array.from(this.nodes.values()).map((node) => node.pause())
-    );
+    await Promise.all(Array.from(this.nodes.values()).map((node) => node.pause()));
 
-    this.updateState({ status: "paused" });
+    this.updateState({ status: 'paused' });
   }
 
   /**
    * Resume graph execution
    */
   async resume(): Promise<void> {
-    if (this.state$.value.status !== "paused") return;
+    if (this.state$.value.status !== 'paused') return;
 
-    await Promise.all(
-      Array.from(this.nodes.values()).map((node) => node.resume())
-    );
+    await Promise.all(Array.from(this.nodes.values()).map((node) => node.resume()));
 
-    this.updateState({ status: "running" });
+    this.updateState({ status: 'running' });
   }
 
   /**
    * Stop graph execution
    */
   async stop(): Promise<void> {
-    await Promise.all(
-      Array.from(this.nodes.values()).map((node) => node.stop())
-    );
+    await Promise.all(Array.from(this.nodes.values()).map((node) => node.stop()));
 
-    this.updateState({ status: "stopped" });
+    this.updateState({ status: 'stopped' });
 
     this.emitEvent({
-      type: "graph:stopped",
+      type: 'graph:stopped',
       timestamp: Date.now(),
-      graphId: this.definition.id
+      graphId: this.definition.id,
     });
 
     this.destroy$.next();
@@ -247,8 +222,8 @@ export class RxGraphRunner {
       data,
       metadata: {
         ...metadata,
-        injectedAt: nodeId
-      }
+        injectedAt: nodeId,
+      },
     };
 
     node.process(packet);
@@ -310,20 +285,19 @@ export class RxGraphRunner {
         packetsProcessed: acc.packetsProcessed + metrics.packetsIn,
         packetsDropped: acc.packetsDropped + metrics.packetsDropped,
         packetsErrored: acc.packetsErrored + metrics.packetsErrored,
-        totalLatency:
-          acc.totalLatency + metrics.averageLatency * metrics.packetsIn
+        totalLatency: acc.totalLatency + metrics.averageLatency * metrics.packetsIn,
       }),
       {
         packetsProcessed: 0,
         packetsDropped: 0,
         packetsErrored: 0,
-        totalLatency: 0
+        totalLatency: 0,
       }
     );
 
     return {
       ...totals,
-      nodeMetrics
+      nodeMetrics,
     };
   }
 
@@ -332,10 +306,7 @@ export class RxGraphRunner {
    */
   private createMetricsStream(): Observable<GraphMetrics> {
     // Combine all node metrics
-    const nodeMetrics$ = Array.from(this.nodes.entries()).map(
-      ([nodeId, node]) =>
-        node.getMetrics$().pipe(map((metrics) => ({ nodeId, metrics })))
-    );
+    const nodeMetrics$ = Array.from(this.nodes.entries()).map(([nodeId, node]) => node.getMetrics$().pipe(map((metrics) => ({ nodeId, metrics }))));
 
     if (nodeMetrics$.length === 0) {
       return of({
@@ -343,18 +314,18 @@ export class RxGraphRunner {
         packetsDropped: 0,
         packetsErrored: 0,
         totalLatency: 0,
-        nodeMetrics: {}
+        nodeMetrics: {},
       });
     }
 
     return combineLatest(nodeMetrics$).pipe(
       map((nodeMetrics) => {
         const nodeMetricsMap: Record<string, any> = {};
-        let totals = {
+        const totals = {
           packetsProcessed: 0,
           packetsDropped: 0,
           packetsErrored: 0,
-          totalLatency: 0
+          totalLatency: 0,
         };
 
         nodeMetrics.forEach(({ nodeId, metrics }) => {
@@ -367,7 +338,7 @@ export class RxGraphRunner {
 
         return {
           ...totals,
-          nodeMetrics: nodeMetricsMap
+          nodeMetrics: nodeMetricsMap,
         };
       }),
 
@@ -383,12 +354,11 @@ export class RxGraphRunner {
    */
   private setupErrorHandling(): void {
     // Combine all node status streams
-    const nodeStatuses$ = Array.from(this.nodes.entries()).map(
-      ([nodeId, node]) =>
-        node.getStatus$().pipe(
-          filter((status) => status === "error"),
-          map(() => ({ nodeId, error: true }))
-        )
+    const nodeStatuses$ = Array.from(this.nodes.entries()).map(([nodeId, node]) =>
+      node.getStatus$().pipe(
+        filter((status) => status === 'error'),
+        map(() => ({ nodeId, error: true }))
+      )
     );
 
     if (nodeStatuses$.length > 0) {
@@ -396,14 +366,14 @@ export class RxGraphRunner {
         .pipe(takeUntil(this.destroy$))
         .subscribe(({ nodeId }) => {
           this.emitEvent({
-            type: "node:error",
+            type: 'node:error',
             timestamp: Date.now(),
             graphId: this.definition.id,
-            nodeId
+            nodeId,
           });
 
           // Handle based on error strategy
-          if (this.definition.config?.errorStrategy === "stop") {
+          if (this.definition.config?.errorStrategy === 'stop') {
             this.stop();
           }
         });
@@ -425,8 +395,8 @@ export class RxGraphRunner {
         packetsDropped: 0,
         packetsErrored: 0,
         totalLatency: 0,
-        nodeMetrics: {}
-      }
+        nodeMetrics: {},
+      },
     };
   }
 
@@ -437,7 +407,7 @@ export class RxGraphRunner {
     this.state$.next({
       ...this.state$.value,
       ...updates,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     });
   }
 
@@ -473,7 +443,7 @@ export class RxGraphRunner {
    */
   private evaluateCondition(condition: string, packet: DataPacket): boolean {
     try {
-      const fn = new Function("data", "metadata", condition);
+      const fn = new Function('data', 'metadata', condition);
       return fn(packet.data, packet.metadata);
     } catch (error) {
       console.error(`Error evaluating condition: ${error}`);
@@ -484,17 +454,14 @@ export class RxGraphRunner {
   /**
    * Apply transformation
    */
-  private applyTransformation(
-    transform: string,
-    packet: DataPacket
-  ): DataPacket {
+  private applyTransformation(transform: string, packet: DataPacket): DataPacket {
     try {
-      const fn = new Function("packet", transform);
+      const fn = new Function('packet', transform);
       const transformedData = fn(packet);
 
       return {
         ...packet,
-        data: transformedData
+        data: transformedData,
       };
     } catch (error) {
       console.error(`Error applying transformation: ${error}`);
@@ -509,10 +476,7 @@ export class RxGraphRunner {
   /**
    * Create a rate-limited stream
    */
-  static rateLimited<T>(
-    source$: Observable<T>,
-    ratePerSecond: number
-  ): Observable<T> {
+  static rateLimited<T>(source$: Observable<T>, ratePerSecond: number): Observable<T> {
     const intervalMs = 1000 / ratePerSecond;
     return source$.pipe(
       concatMap((item) =>
@@ -527,11 +491,7 @@ export class RxGraphRunner {
   /**
    * Create a windowed aggregation
    */
-  static windowed<T, R>(
-    source$: Observable<T>,
-    windowSize: number,
-    aggregateFn: (items: T[]) => R
-  ): Observable<R> {
+  static windowed<T, R>(source$: Observable<T>, windowSize: number, aggregateFn: (items: T[]) => R): Observable<R> {
     return source$.pipe(
       bufferTime(windowSize),
       filter((items) => items.length > 0),
@@ -542,20 +502,16 @@ export class RxGraphRunner {
   /**
    * Create a circuit breaker
    */
-  static circuitBreaker<T>(
-    source$: Observable<T>,
-    errorThreshold: number = 5,
-    resetTime: number = 30000
-  ): Observable<T> {
+  static circuitBreaker<T>(source$: Observable<T>, errorThreshold: number = 5, resetTime: number = 30000): Observable<T> {
     interface CircuitState {
       errorCount: number;
       lastError: number;
       isOpen: boolean;
       value?: T;
     }
-    
+
     return source$.pipe(
-      map((value: T) => ({ value, errorCount: 0, lastError: 0, isOpen: false } as CircuitState)),
+      map((value: T) => ({ value, errorCount: 0, lastError: 0, isOpen: false }) as CircuitState),
       scan(
         (acc: CircuitState, state: CircuitState) => {
           // Reset if enough time has passed
@@ -579,4 +535,4 @@ export class RxGraphRunner {
 }
 
 // Import needed RxJS operators
-import { delay } from "rxjs/operators";
+import { delay } from 'rxjs/operators';

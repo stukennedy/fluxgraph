@@ -1,7 +1,7 @@
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, scan, bufferTime, bufferCount } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
-import { AggregateNodeConfig, DataPacket } from '../core/types';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { AggregateNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * RxJS-based Aggregate node
@@ -19,21 +19,15 @@ export class RxAggregateNode extends RxBaseNode<AggregateNodeConfig> {
     }
   }
 
-  protected createProcessingOperator(): (
-    source: Observable<DataPacket>
-  ) => Observable<DataPacket | null> {
+  protected createProcessingOperator(): (source: Observable<DataPacket>) => Observable<DataPacket | null> {
     return (source) => {
       // Apply windowing based on config
       let windowed$: Observable<DataPacket[]>;
-      
+
       if (this.config.windowType === 'time') {
-        windowed$ = source.pipe(
-          bufferTime(this.config.windowSize || 1000)
-        );
+        windowed$ = source.pipe(bufferTime(this.config.windowSize || 1000));
       } else if (this.config.windowType === 'count') {
-        windowed$ = source.pipe(
-          bufferCount(this.config.windowSize || 10)
-        );
+        windowed$ = source.pipe(bufferCount(this.config.windowSize || 10));
       } else {
         // Sliding window
         windowed$ = source.pipe(
@@ -43,26 +37,26 @@ export class RxAggregateNode extends RxBaseNode<AggregateNodeConfig> {
             const maxSize = this.config.windowSize || 10;
             return newAcc.slice(-maxSize);
           }, []),
-          map(packets => packets.length > 0 ? packets : [])
+          map((packets) => (packets.length > 0 ? packets : []))
         );
       }
 
       return windowed$.pipe(
-        map(packets => {
+        map((packets) => {
           if (packets.length === 0) return null;
-          
+
           if (!this.aggregateFn) {
             throw new Error('Aggregate function not initialized');
           }
 
           try {
             // Extract values and metadata
-            const values = packets.map(p => p.data);
-            const metadata = packets.map(p => p.metadata || {});
-            
+            const values = packets.map((p) => p.data);
+            const metadata = packets.map((p) => p.metadata || {});
+
             // Apply aggregation
             const aggregatedData = this.aggregateFn(values, metadata);
-            
+
             // Create aggregated packet
             const packet: DataPacket = {
               id: `${this.config.id}-${Date.now()}-${Math.random().toString(36).substring(7)}`,
@@ -73,10 +67,10 @@ export class RxAggregateNode extends RxBaseNode<AggregateNodeConfig> {
                 aggregatedAt: Date.now(),
                 windowType: this.config.windowType,
                 windowSize: this.config.windowSize,
-                packetCount: packets.length
-              }
+                packetCount: packets.length,
+              },
             };
-            
+
             return packet;
           } catch (error) {
             console.error(`Aggregate error in node ${this.config.id}:`, error);
@@ -100,7 +94,7 @@ export class RxAggregateNode extends RxBaseNode<AggregateNodeConfig> {
   }
 
   protected getBufferDuration(): number {
-    return this.config.windowType === 'time' ? (this.config.windowSize || 1000) : 1000;
+    return this.config.windowType === 'time' ? this.config.windowSize || 1000 : 1000;
   }
 
   protected async onStart(): Promise<void> {}

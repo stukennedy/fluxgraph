@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { GraphDefinition, GraphState, GraphContext, GraphEvent, DataPacket } from "./types";
+import { GraphDefinition, GraphState, GraphEvent, GraphMetrics, DataPacket } from "./types";
 /**
  * RxJS-based Graph Runner
  * Uses Observable streams for reactive graph processing
@@ -60,11 +60,11 @@ export declare class RxGraphRunner {
     /**
      * Get metrics observable
      */
-    getMetrics$(): Observable<GraphContext["metrics"]>;
+    getMetrics$(): Observable<GraphMetrics>;
     /**
      * Get current metrics
      */
-    getMetrics(): GraphContext["metrics"];
+    getMetrics(): GraphMetrics;
     /**
      * Create metrics aggregation stream
      */

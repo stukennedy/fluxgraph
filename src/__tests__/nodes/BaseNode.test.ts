@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { BaseNode } from '../../nodes/BaseNode';
-import { NodeConfig, DataPacket } from '../../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { NodeConfig, DataPacket } from '@/core/types';
 
 // Create a concrete implementation for testing
 class TestNode extends BaseNode {
   protected async processPacket(packet: DataPacket): Promise<DataPacket | null> {
     return {
       ...packet,
-      data: { ...packet.data, processed: true }
+      data: { ...packet.data, processed: true },
     };
   }
 
@@ -29,10 +29,10 @@ describe('BaseNode', () => {
       type: 'transform',
       name: 'Test Node',
       bufferSize: 100,
-      timeout: 5000
+      timeout: 5000,
     };
     node = new TestNode(config);
-    
+
     // Spy on console.error to suppress error output in tests
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -78,10 +78,10 @@ describe('BaseNode', () => {
       await node.initialize();
       await node.start();
       const status1 = node.getStatus();
-      
+
       await node.start(); // Should be no-op
       const status2 = node.getStatus();
-      
+
       expect(status1).toBe(status2);
       await node.stop();
     });
@@ -95,11 +95,11 @@ describe('BaseNode', () => {
       const packet: DataPacket = {
         id: 'test-packet',
         timestamp: Date.now(),
-        data: { value: 42 }
+        data: { value: 42 },
       };
 
       await node.process(packet);
-      
+
       const metrics = node.getMetrics();
       expect(metrics.packetsIn).toBe(1);
 
@@ -114,11 +114,11 @@ describe('BaseNode', () => {
       const packet: DataPacket = {
         id: 'test-packet',
         timestamp: Date.now(),
-        data: { value: 42 }
+        data: { value: 42 },
       };
 
       await node.process(packet);
-      
+
       // Since we're paused, packets are dropped (not buffered in current implementation)
       const metrics = node.getMetrics();
       expect(metrics.packetsDropped).toBeGreaterThan(0);
@@ -129,7 +129,7 @@ describe('BaseNode', () => {
     it('should handle buffer overflow', async () => {
       const smallBufferNode = new TestNode({
         ...config,
-        bufferSize: 2
+        bufferSize: 2,
       });
 
       await smallBufferNode.initialize();
@@ -141,7 +141,7 @@ describe('BaseNode', () => {
         await smallBufferNode.process({
           id: `packet-${i}`,
           timestamp: Date.now(),
-          data: { index: i }
+          data: { index: i },
         });
       }
 
@@ -160,11 +160,11 @@ describe('BaseNode', () => {
       const packet: DataPacket = {
         id: 'test-packet',
         timestamp: Date.now(),
-        data: { value: 42 }
+        data: { value: 42 },
       };
 
       await node.process(packet);
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const metrics = node.getMetrics();
       expect(metrics.packetsIn).toBeGreaterThan(0);
@@ -181,9 +181,9 @@ describe('BaseNode', () => {
         await node.process({
           id: `packet-${i}`,
           timestamp: Date.now(),
-          data: { index: i }
+          data: { index: i },
         });
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       const metrics = node.getMetrics();
@@ -217,12 +217,12 @@ describe('BaseNode', () => {
       await errorNode.process({
         id: 'error-packet',
         timestamp: Date.now(),
-        data: { shouldError: true }
+        data: { shouldError: true },
       });
 
       const metrics = errorNode.getMetrics();
       expect(metrics.packetsErrored).toBeGreaterThan(0);
-      
+
       // Verify that console.error was called
       expect(consoleErrorSpy).toHaveBeenCalled();
 
@@ -236,8 +236,8 @@ describe('BaseNode', () => {
           maxRetries: 2,
           backoffMultiplier: 1.5,
           initialDelay: 10,
-          maxDelay: 100
-        }
+          maxDelay: 100,
+        },
       });
 
       await retryNode.initialize();
@@ -246,7 +246,7 @@ describe('BaseNode', () => {
       await retryNode.process({
         id: 'retry-packet',
         timestamp: Date.now(),
-        data: { shouldError: true }
+        data: { shouldError: true },
       });
 
       // Should have attempted retries
@@ -274,11 +274,11 @@ describe('BaseNode', () => {
       const packet: DataPacket = {
         id: 'test-packet',
         timestamp: Date.now(),
-        data: { value: 42 }
+        data: { value: 42 },
       };
 
       await node1.process(packet);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Check if connection worked
       const metrics1 = node1.getMetrics();

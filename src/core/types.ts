@@ -89,14 +89,7 @@ export interface SplitNodeConfig extends NodeConfig {
 }
 
 // Union type for all node configs
-export type AnyNodeConfig = 
-  | SourceNodeConfig 
-  | TransformNodeConfig 
-  | FilterNodeConfig 
-  | AggregateNodeConfig 
-  | SinkNodeConfig
-  | MergeNodeConfig
-  | SplitNodeConfig;
+export type AnyNodeConfig = SourceNodeConfig | TransformNodeConfig | FilterNodeConfig | AggregateNodeConfig | SinkNodeConfig | MergeNodeConfig | SplitNodeConfig;
 
 // Edge connecting nodes
 export interface GraphEdge {
@@ -166,7 +159,7 @@ export interface NodeMetrics {
 }
 
 // Event types for graph lifecycle
-export type GraphEventType = 
+export type GraphEventType =
   | 'graph:started'
   | 'graph:stopped'
   | 'graph:error'

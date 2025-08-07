@@ -1,8 +1,8 @@
-import { SourceNode } from '../nodes/SourceNode';
-import { TransformNode } from '../nodes/TransformNode';
-import { FilterNode } from '../nodes/FilterNode';
-import { AggregateNode } from '../nodes/AggregateNode';
-import { SinkNode } from '../nodes/SinkNode';
+import { SourceNode } from '@/nodes/SourceNode';
+import { TransformNode } from '@/nodes/TransformNode';
+import { FilterNode } from '@/nodes/FilterNode';
+import { AggregateNode } from '@/nodes/AggregateNode';
+import { SinkNode } from '@/nodes/SinkNode';
 /**
  * Main GraphRunner class
  * Manages the execution of a graph of nodes

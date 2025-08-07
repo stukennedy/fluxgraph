@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { AggregateNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { AggregateNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Aggregate node - aggregates data packets over windows
@@ -20,7 +20,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
 
   protected async onStart(): Promise<void> {
     this.windowStartTime = Date.now();
-    
+
     // Start window timer if time-based
     if (this.config.windowType === 'time') {
       this.scheduleWindowClose();
@@ -36,7 +36,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
 
   protected async onResume(): Promise<void> {
     this.windowStartTime = Date.now();
-    
+
     if (this.config.windowType === 'time') {
       this.scheduleWindowClose();
     }
@@ -57,15 +57,15 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
     switch (this.config.windowType) {
       case 'count':
         return this.buffer.length >= this.config.windowSize;
-      
+
       case 'time':
         // Time windows are handled by timer
         return false;
-      
+
       case 'session':
         // Session windows need explicit closing
         return false;
-      
+
       default:
         return false;
     }
@@ -84,9 +84,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
 
     try {
       // Apply the aggregation function
-      const aggregatedData = await Promise.resolve(
-        this.aggregateFn(this.buffer)
-      );
+      const aggregatedData = await Promise.resolve(this.aggregateFn(this.buffer));
 
       // Create aggregated packet
       const packet: DataPacket = {
@@ -100,8 +98,8 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
           windowSize: this.config.windowSize,
           packetCount: this.buffer.length,
           windowStart: this.windowStartTime,
-          windowEnd: Date.now()
-        }
+          windowEnd: Date.now(),
+        },
       };
 
       // Emit the aggregated packet
@@ -109,7 +107,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
 
       // Clear buffer after emission
       this.clearBuffer();
-      
+
       // Reset window start time
       this.windowStartTime = Date.now();
 
@@ -127,7 +125,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
    */
   private scheduleWindowClose(): void {
     const windowMs = this.config.windowSize * 1000; // Convert seconds to ms
-    
+
     setTimeout(async () => {
       if (this.status === 'running') {
         await this.processBuffer();
@@ -142,7 +140,7 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
     if (this.config.windowType !== 'session') {
       throw new Error('closeSession can only be called on session windows');
     }
-    
+
     await this.processBuffer();
     this.sessionId = undefined;
   }
@@ -154,12 +152,12 @@ export class AggregateNode extends BaseNode<AggregateNodeConfig> {
     if (this.config.windowType !== 'session') {
       throw new Error('startSession can only be called on session windows');
     }
-    
+
     // Close previous session if exists
     if (this.sessionId && this.buffer.length > 0) {
       this.processBuffer();
     }
-    
+
     this.sessionId = sessionId;
     this.windowStartTime = Date.now();
   }

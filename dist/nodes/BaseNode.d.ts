@@ -1,4 +1,4 @@
-import { NodeConfig, DataPacket, NodeStatus, NodeMetrics } from '../core/types';
+import { NodeConfig, DataPacket, NodeStatus, NodeMetrics } from '@/core/types';
 /**
  * Base class for all graph nodes
  * Handles common functionality like buffering, metrics, error handling

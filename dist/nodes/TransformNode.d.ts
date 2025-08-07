@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { TransformNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { TransformNodeConfig, DataPacket } from '@/core/types';
 /**
  * Transform node - transforms data packets
  */

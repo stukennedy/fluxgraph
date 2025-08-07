@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { AggregateNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { AggregateNodeConfig, DataPacket } from '@/core/types';
 /**
  * Aggregate node - aggregates data packets over windows
  */

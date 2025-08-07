@@ -29,18 +29,7 @@ export function createSandboxedFunction(code, params = ['data', 'metadata']) {
  */
 export function validateCode(code) {
     // Check for dangerous patterns
-    const dangerousPatterns = [
-        /eval\s*\(/,
-        /Function\s*\(/,
-        /require\s*\(/,
-        /import\s+/,
-        /process\./,
-        /global\./,
-        /__dirname/,
-        /__filename/,
-        /fs\./,
-        /child_process/
-    ];
+    const dangerousPatterns = [/eval\s*\(/, /Function\s*\(/, /require\s*\(/, /import\s+/, /process\./, /global\./, /__dirname/, /__filename/, /fs\./, /child_process/];
     for (const pattern of dangerousPatterns) {
         if (pattern.test(code)) {
             return false;
@@ -56,10 +45,7 @@ export function withTimeout(fn, timeoutMs) {
         const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => reject(new Error(`Function timeout after ${timeoutMs}ms`)), timeoutMs);
         });
-        const result = await Promise.race([
-            Promise.resolve(fn(...args)),
-            timeoutPromise
-        ]);
+        const result = await Promise.race([Promise.resolve(fn(...args)), timeoutPromise]);
         return result;
     };
 }

@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
 /**
  * RxJS-based Transform node
  */
@@ -33,8 +33,8 @@ export class RxTransformNode extends RxBaseNode {
                     metadata: {
                         ...packet.metadata,
                         transformedBy: this.config.id,
-                        transformedAt: Date.now()
-                    }
+                        transformedAt: Date.now(),
+                    },
                 };
             }
             catch (error) {
@@ -45,13 +45,13 @@ export class RxTransformNode extends RxBaseNode {
                     metadata: {
                         ...packet.metadata,
                         errorNode: this.config.id,
-                        errorAt: Date.now()
-                    }
+                        errorAt: Date.now(),
+                    },
                 };
             }
         }), 
         // Flatten the promise
-        map(promise => from(promise)), concatAll());
+        map((promise) => from(promise)), concatAll());
     }
     updateLatencyMetric(latency) {
         const metrics = this.metrics$.value;

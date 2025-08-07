@@ -16,7 +16,7 @@ export class RxBaseNode {
         packetsDropped: 0,
         packetsErrored: 0,
         averageLatency: 0,
-        lastProcessedAt: undefined
+        lastProcessedAt: undefined,
     });
     pipeline$;
     constructor(config) {
@@ -30,12 +30,10 @@ export class RxBaseNode {
         // Create the processing pipeline
         this.pipeline$ = this.createPipeline();
         // Subscribe to the pipeline
-        this.pipeline$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
+        this.pipeline$.pipe(takeUntil(this.destroy$)).subscribe({
             next: (packet) => this.output$.next(packet),
             error: (error) => this.handleError(error),
-            complete: () => this.status$.next('completed')
+            complete: () => this.status$.next('completed'),
         });
         await this.onInitialize();
     }
@@ -49,9 +47,7 @@ export class RxBaseNode {
         // Update input metrics
         tap(() => this.updateMetric('packetsIn')), 
         // Apply timeout if configured
-        this.config.timeout
-            ? timeout(this.config.timeout)
-            : tap(), 
+        this.config.timeout ? timeout(this.config.timeout) : tap(), 
         // Process the packet
         mergeMap((packet) => {
             const result$ = of(packet).pipe(this.createProcessingOperator());
@@ -64,10 +60,9 @@ export class RxBaseNode {
             ? retry({
                 count: this.config.retryPolicy.maxRetries,
                 delay: (error, retryCount) => {
-                    const delay = Math.min(this.config.retryPolicy.initialDelay *
-                        Math.pow(this.config.retryPolicy.backoffMultiplier, retryCount), this.config.retryPolicy.maxDelay);
+                    const delay = Math.min(this.config.retryPolicy.initialDelay * Math.pow(this.config.retryPolicy.backoffMultiplier, retryCount), this.config.retryPolicy.maxDelay);
                     return of(null).pipe(tap(() => null), map(() => delay));
-                }
+                },
             })
             : tap(), 
         // Handle errors
@@ -196,7 +191,7 @@ export class RxBaseNode {
      */
     createBufferOperator() {
         if (!this.requiresBuffering()) {
-            return (source) => source.pipe(map(item => [item]));
+            return (source) => source.pipe(map((item) => [item]));
         }
         const bufferSize = this.config.bufferSize || 1000;
         switch (this.getBufferStrategy()) {

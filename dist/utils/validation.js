@@ -68,7 +68,7 @@ export function validateGraphDefinition(definition) {
     }
     return {
         valid: errors.length === 0,
-        errors
+        errors,
     };
 }
 /**
@@ -77,7 +77,7 @@ export function validateGraphDefinition(definition) {
 export function hasCycles(definition) {
     const adjacency = {};
     // Build adjacency list
-    definition.edges.forEach(edge => {
+    definition.edges.forEach((edge) => {
         if (!adjacency[edge.from]) {
             adjacency[edge.from] = [];
         }
@@ -158,18 +158,14 @@ export function validateNodeConfig(config) {
     }
     return {
         valid: errors.length === 0,
-        errors
+        errors,
     };
 }
 /**
  * Validate a data packet
  */
 export function validateDataPacket(packet) {
-    return (packet &&
-        typeof packet === 'object' &&
-        typeof packet.id === 'string' &&
-        typeof packet.timestamp === 'number' &&
-        'data' in packet);
+    return packet && typeof packet === 'object' && typeof packet.id === 'string' && typeof packet.timestamp === 'number' && 'data' in packet;
 }
 /**
  * Validate function syntax
@@ -182,7 +178,7 @@ export function validateFunctionSyntax(functionString) {
     catch (error) {
         return {
             valid: false,
-            error: error instanceof Error ? error.message : 'Invalid function syntax'
+            error: error instanceof Error ? error.message : 'Invalid function syntax',
         };
     }
 }
@@ -191,5 +187,5 @@ export const validation = {
     validateNodeConfig,
     validateDataPacket,
     validateFunctionSyntax,
-    hasCycles
+    hasCycles,
 };

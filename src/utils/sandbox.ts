@@ -6,14 +6,11 @@
  * Create a sandboxed function from a string
  * This is a simplified version - in production, use a proper sandbox like VM2 or QuickJS
  */
-export function createSandboxedFunction(
-  code: string,
-  params: string[] = ['data', 'metadata']
-): Function {
+export function createSandboxedFunction(code: string, params: string[] = ['data', 'metadata']): Function {
   try {
     // Create function with limited scope
     const func = new Function(...params, code);
-    
+
     // Wrap in error handling
     return (...args: any[]) => {
       try {
@@ -33,18 +30,7 @@ export function createSandboxedFunction(
  */
 export function validateCode(code: string): boolean {
   // Check for dangerous patterns
-  const dangerousPatterns = [
-    /eval\s*\(/,
-    /Function\s*\(/,
-    /require\s*\(/,
-    /import\s+/,
-    /process\./,
-    /global\./,
-    /__dirname/,
-    /__filename/,
-    /fs\./,
-    /child_process/
-  ];
+  const dangerousPatterns = [/eval\s*\(/, /Function\s*\(/, /require\s*\(/, /import\s+/, /process\./, /global\./, /__dirname/, /__filename/, /fs\./, /child_process/];
 
   for (const pattern of dangerousPatterns) {
     if (pattern.test(code)) {
@@ -58,19 +44,13 @@ export function validateCode(code: string): boolean {
 /**
  * Create a timeout wrapper for functions
  */
-export function withTimeout<T>(
-  fn: (...args: any[]) => T | Promise<T>,
-  timeoutMs: number
-): (...args: any[]) => Promise<T> {
+export function withTimeout<T>(fn: (...args: any[]) => T | Promise<T>, timeoutMs: number): (...args: any[]) => Promise<T> {
   return async (...args: any[]): Promise<T> => {
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error(`Function timeout after ${timeoutMs}ms`)), timeoutMs);
     });
 
-    const result = await Promise.race([
-      Promise.resolve(fn(...args)),
-      timeoutPromise
-    ]);
+    const result = await Promise.race([Promise.resolve(fn(...args)), timeoutPromise]);
 
     return result;
   };
@@ -79,22 +59,19 @@ export function withTimeout<T>(
 /**
  * Create a memoized function
  */
-export function memoize<T extends (...args: any[]) => any>(
-  fn: T,
-  keyFn?: (...args: Parameters<T>) => string
-): T {
+export function memoize<T extends (...args: any[]) => any>(fn: T, keyFn?: (...args: Parameters<T>) => string): T {
   const cache = new Map<string, ReturnType<T>>();
-  
+
   return ((...args: Parameters<T>): ReturnType<T> => {
     const key = keyFn ? keyFn(...args) : JSON.stringify(args);
-    
+
     if (cache.has(key)) {
       return cache.get(key)!;
     }
-    
+
     const result = fn(...args);
     cache.set(key, result);
-    
+
     // Limit cache size
     if (cache.size > 1000) {
       const firstKey = cache.keys().next().value;
@@ -102,7 +79,7 @@ export function memoize<T extends (...args: any[]) => any>(
         cache.delete(firstKey);
       }
     }
-    
+
     return result;
   }) as T;
 }

@@ -1,5 +1,5 @@
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { NodeConfig, DataPacket, NodeStatus, NodeMetrics } from '../core/types';
+import { NodeConfig, DataPacket, NodeStatus, NodeMetrics } from '@/core/types';
 /**
  * RxJS-based base class for all graph nodes
  * Uses Observables for reactive stream processing

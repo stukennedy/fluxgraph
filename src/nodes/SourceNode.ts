@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { SourceNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { SourceNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Source node - generates data packets from various sources
@@ -68,13 +68,13 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
    */
   private startTimer(): void {
     const interval = this.config.config.interval || 1000;
-    
+
     this.intervalId = setInterval(async () => {
       const packet = this.createPacket({
         timestamp: Date.now(),
-        source: 'timer'
+        source: 'timer',
       });
-      
+
       await this.emit(packet);
     }, interval) as unknown as number;
   }
@@ -94,15 +94,13 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
 
     this.websocket.onmessage = async (event) => {
       try {
-        const data = typeof event.data === 'string' 
-          ? JSON.parse(event.data) 
-          : event.data;
-        
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+
         const packet = this.createPacket(data, {
           source: 'websocket',
-          url
+          url,
         });
-        
+
         await this.emit(packet);
       } catch (error) {
         await this.handleError(error as Error);
@@ -115,7 +113,7 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
 
     this.websocket.onclose = () => {
       console.log(`WebSocket disconnected: ${url}`);
-      
+
       // Attempt to reconnect if still running
       if (this.status === 'running') {
         setTimeout(() => this.connectWebSocket(), 5000);
@@ -139,13 +137,13 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
       try {
         const response = await fetch(url, { headers });
         const data = await response.json();
-        
+
         const packet = this.createPacket(data, {
           source: 'http',
           url,
-          statusCode: response.status
+          statusCode: response.status,
         });
-        
+
         await this.emit(packet);
       } catch (error) {
         await this.handleError(error as Error);
@@ -176,14 +174,17 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
       try {
         // This would need to be connected to your database service
         // For now, we'll emit a placeholder
-        const packet = this.createPacket({
-          query,
-          timestamp: Date.now(),
-          message: 'Database polling not yet implemented'
-        }, {
-          source: 'database'
-        });
-        
+        const packet = this.createPacket(
+          {
+            query,
+            timestamp: Date.now(),
+            message: 'Database polling not yet implemented',
+          },
+          {
+            source: 'database',
+          }
+        );
+
         await this.emit(packet);
       } catch (error) {
         await this.handleError(error as Error);
@@ -231,8 +232,8 @@ export class SourceNode extends BaseNode<SourceNodeConfig> {
       metadata: {
         ...metadata,
         nodeId: this.config.id,
-        nodeType: 'source'
-      }
+        nodeType: 'source',
+      },
     };
   }
 }

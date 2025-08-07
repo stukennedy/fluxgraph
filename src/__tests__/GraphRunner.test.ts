@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { GraphRunner } from '../core/GraphRunner';
-import { GraphDefinition, DataPacket } from '../core/types';
+import { GraphRunner } from '@/core/GraphRunner';
+import { GraphDefinition, DataPacket } from '@/core/types';
 
 describe('GraphRunner', () => {
   let graphRunner: GraphRunner;
@@ -17,27 +17,27 @@ describe('GraphRunner', () => {
           type: 'source',
           name: 'Test Source',
           sourceType: 'manual',
-          config: {}
+          config: {},
         },
         {
           id: 'transform',
           type: 'transform',
           name: 'Test Transform',
           transformFunction: 'return { ...data, transformed: true }',
-          outputSchema: {}
+          outputSchema: {},
         },
         {
           id: 'sink',
           type: 'sink',
           name: 'Test Sink',
           sinkType: 'log',
-          config: {}
-        }
+          config: {},
+        },
       ],
       edges: [
         { id: 'e1', from: 'source', to: 'transform' },
-        { id: 'e2', from: 'transform', to: 'sink' }
-      ]
+        { id: 'e2', from: 'transform', to: 'sink' },
+      ],
     };
 
     graphRunner = new GraphRunner(testDefinition);
@@ -59,9 +59,9 @@ describe('GraphRunner', () => {
     it('should validate graph definition', () => {
       const invalidDefinition = {
         ...testDefinition,
-        nodes: []
+        nodes: [],
       };
-      
+
       expect(() => new GraphRunner(invalidDefinition)).not.toThrow();
     });
   });
@@ -70,9 +70,9 @@ describe('GraphRunner', () => {
     it('should start and stop execution', async () => {
       await graphRunner.initialize();
       await graphRunner.start();
-      
+
       expect(graphRunner.getState().status).toBe('running');
-      
+
       await graphRunner.stop();
       expect(graphRunner.getState().status).toBe('stopped');
     });
@@ -80,13 +80,13 @@ describe('GraphRunner', () => {
     it('should pause and resume execution', async () => {
       await graphRunner.initialize();
       await graphRunner.start();
-      
+
       await graphRunner.pause();
       expect(graphRunner.getState().status).toBe('paused');
-      
+
       await graphRunner.resume();
       expect(graphRunner.getState().status).toBe('running');
-      
+
       await graphRunner.stop();
     });
   });
@@ -97,7 +97,7 @@ describe('GraphRunner', () => {
       await graphRunner.start();
 
       const testData = { value: 42 };
-      
+
       // This should not throw
       expect(() => {
         graphRunner.inject('source', testData);
@@ -110,9 +110,7 @@ describe('GraphRunner', () => {
       await graphRunner.initialize();
       await graphRunner.start();
 
-      await expect(
-        graphRunner.inject('non-existent', {})
-      ).rejects.toThrow();
+      await expect(graphRunner.inject('non-existent', {})).rejects.toThrow();
 
       await graphRunner.stop();
     });
@@ -122,7 +120,7 @@ describe('GraphRunner', () => {
     it('should track metrics', async () => {
       await graphRunner.initialize();
       const metrics = graphRunner.getMetrics();
-      
+
       expect(metrics).toHaveProperty('packetsProcessed');
       expect(metrics).toHaveProperty('packetsDropped');
       expect(metrics).toHaveProperty('packetsErrored');
@@ -140,7 +138,7 @@ describe('GraphRunner', () => {
       graphRunner.inject('source', { test: true });
 
       // Wait a bit for processing
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const updatedMetrics = graphRunner.getMetrics();
       expect(updatedMetrics.packetsProcessed).toBeGreaterThanOrEqual(0);
@@ -154,15 +152,15 @@ describe('GraphRunner', () => {
       const errorDefinition: GraphDefinition = {
         ...testDefinition,
         nodes: [
-          ...testDefinition.nodes.filter(n => n.id !== 'transform'),
+          ...testDefinition.nodes.filter((n) => n.id !== 'transform'),
           {
             id: 'transform',
             type: 'transform',
             name: 'Error Transform',
             transformFunction: 'throw new Error("Test error")',
-            outputSchema: {}
-          }
-        ]
+            outputSchema: {},
+          },
+        ],
       };
 
       const errorGraph = new GraphRunner(errorDefinition);
@@ -181,16 +179,16 @@ describe('GraphRunner', () => {
       const stopOnErrorDefinition: GraphDefinition = {
         ...testDefinition,
         config: {
-          errorStrategy: 'stop'
-        }
+          errorStrategy: 'stop',
+        },
       };
 
       const stopGraph = new GraphRunner(stopOnErrorDefinition);
       await stopGraph.initialize();
       await stopGraph.start();
-      
+
       expect(stopGraph.getState().status).toBe('running');
-      
+
       await stopGraph.stop();
     });
   });

@@ -1,10 +1,10 @@
 import { Subject, BehaviorSubject, merge, combineLatest, of, EMPTY } from "rxjs";
 import { filter, map, tap, catchError, share, takeUntil, concatMap, bufferTime, scan, throttleTime } from "rxjs/operators";
-import { RxTransformNode } from "../nodes/RxTransformNode";
-import { RxSourceNode } from "../nodes/RxSourceNode";
-import { RxSinkNode } from "../nodes/RxSinkNode";
-import { RxFilterNode } from "../nodes/RxFilterNode";
-import { RxAggregateNode } from "../nodes/RxAggregateNode";
+import { RxTransformNode } from "@/nodes/RxTransformNode";
+import { RxSourceNode } from "@/nodes/RxSourceNode";
+import { RxSinkNode } from "@/nodes/RxSinkNode";
+import { RxFilterNode } from "@/nodes/RxFilterNode";
+import { RxAggregateNode } from "@/nodes/RxAggregateNode";
 /**
  * RxJS-based Graph Runner
  * Uses Observable streams for reactive graph processing
@@ -250,7 +250,7 @@ export class RxGraphRunner {
         }
         return combineLatest(nodeMetrics$).pipe(map((nodeMetrics) => {
             const nodeMetricsMap = {};
-            let totals = {
+            const totals = {
                 packetsProcessed: 0,
                 packetsDropped: 0,
                 packetsErrored: 0,

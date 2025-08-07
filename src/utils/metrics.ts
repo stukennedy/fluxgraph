@@ -1,12 +1,9 @@
-import { NodeMetrics, GraphContext } from '../core/types';
+import { NodeMetrics, GraphContext } from '@/core/types';
 
 /**
  * Calculate throughput from metrics
  */
-export function calculateThroughput(
-  metrics: NodeMetrics,
-  windowSeconds: number = 60
-): number {
+export function calculateThroughput(metrics: NodeMetrics, windowSeconds: number = 60): number {
   const packetsProcessed = metrics.packetsIn;
   return packetsProcessed / windowSeconds;
 }
@@ -41,27 +38,25 @@ export function calculateSuccessRate(metrics: NodeMetrics): number {
 /**
  * Aggregate node metrics
  */
-export function aggregateNodeMetrics(
-  nodeMetrics: Record<string, NodeMetrics>
-): GraphContext['metrics'] {
+export function aggregateNodeMetrics(nodeMetrics: Record<string, NodeMetrics>): GraphContext['metrics'] {
   const aggregated = Object.values(nodeMetrics).reduce(
     (acc, metrics) => ({
       packetsProcessed: acc.packetsProcessed + metrics.packetsIn,
       packetsDropped: acc.packetsDropped + metrics.packetsDropped,
       packetsErrored: acc.packetsErrored + metrics.packetsErrored,
-      totalLatency: acc.totalLatency + (metrics.averageLatency * metrics.packetsIn)
+      totalLatency: acc.totalLatency + metrics.averageLatency * metrics.packetsIn,
     }),
     {
       packetsProcessed: 0,
       packetsDropped: 0,
       packetsErrored: 0,
-      totalLatency: 0
+      totalLatency: 0,
     }
   );
 
   return {
     ...aggregated,
-    nodeMetrics
+    nodeMetrics,
   };
 }
 
@@ -92,32 +87,25 @@ export function createEmptyMetrics(): NodeMetrics {
     packetsDropped: 0,
     packetsErrored: 0,
     averageLatency: 0,
-    lastProcessedAt: undefined
+    lastProcessedAt: undefined,
   };
 }
 
 /**
  * Merge metrics
  */
-export function mergeMetrics(
-  current: NodeMetrics,
-  update: Partial<NodeMetrics>
-): NodeMetrics {
+export function mergeMetrics(current: NodeMetrics, update: Partial<NodeMetrics>): NodeMetrics {
   return {
     ...current,
     ...update,
-    lastProcessedAt: Date.now()
+    lastProcessedAt: Date.now(),
   };
 }
 
 /**
  * Calculate exponential moving average
  */
-export function calculateEMA(
-  currentValue: number,
-  newValue: number,
-  alpha: number = 0.2
-): number {
+export function calculateEMA(currentValue: number, newValue: number, alpha: number = 0.2): number {
   return alpha * newValue + (1 - alpha) * currentValue;
 }
 
@@ -141,7 +129,7 @@ export class LatencyTracker {
 
   getPercentile(percentile: number): number {
     if (this.latencies.length === 0) return 0;
-    
+
     const sorted = [...this.latencies].sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[Math.max(0, index)];
@@ -179,5 +167,5 @@ export const metrics = {
   createEmptyMetrics,
   mergeMetrics,
   calculateEMA,
-  LatencyTracker
+  LatencyTracker,
 };

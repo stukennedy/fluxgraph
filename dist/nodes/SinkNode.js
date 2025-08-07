@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode';
+import { BaseNode } from '@/nodes/BaseNode';
 /**
  * Sink node - outputs data to external systems
  */
@@ -134,9 +134,9 @@ export class SinkNode extends BaseNode {
         const response = await fetch(url, {
             method,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: typeof data === 'string' ? data : JSON.stringify(data)
+            body: typeof data === 'string' ? data : JSON.stringify(data),
         });
         if (!response.ok) {
             throw new Error(`HTTP sink failed: ${response.status} ${response.statusText}`);
@@ -151,7 +151,7 @@ export class SinkNode extends BaseNode {
         this.outputBuffer.push({
             table: this.config.config.table,
             data,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
         // Schedule flush if buffer is getting full
         if (this.outputBuffer.length >= 100) {
@@ -217,8 +217,8 @@ export class SinkConfigurations {
             name,
             sinkType: 'log',
             config: {
-                format: 'json'
-            }
+                format: 'json',
+            },
         };
     }
     /**
@@ -232,8 +232,8 @@ export class SinkConfigurations {
             sinkType: 'websocket',
             config: {
                 url,
-                format: 'json'
-            }
+                format: 'json',
+            },
         };
     }
     /**
@@ -248,8 +248,8 @@ export class SinkConfigurations {
             config: {
                 url,
                 method,
-                format: 'json'
-            }
+                format: 'json',
+            },
         };
     }
     /**
@@ -263,8 +263,8 @@ export class SinkConfigurations {
             sinkType: 'database',
             config: {
                 table,
-                format: 'json'
-            }
+                format: 'json',
+            },
         };
     }
     /**

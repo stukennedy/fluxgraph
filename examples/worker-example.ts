@@ -3,7 +3,7 @@
  */
 
 import { Graph, GraphBuilder, nodes, templates } from '@fluxgraph/core';
-import { DurableObjectStorage, saveGraphState, loadGraphState } from '@fluxgraph/core/utils';
+import { DurableObjectStorage, saveGraphState } from '@fluxgraph/core/utils';
 
 // Durable Object for stream processing
 export class StreamProcessor implements DurableObject {
@@ -25,28 +25,25 @@ export class StreamProcessor implements DurableObject {
       switch (path) {
         case '/start':
           return await this.handleStart(request);
-        
+
         case '/stop':
           return await this.handleStop();
-        
+
         case '/inject':
           return await this.handleInject(request);
-        
+
         case '/metrics':
           return await this.handleMetrics();
-        
+
         case '/status':
           return await this.handleStatus();
-        
+
         default:
           return new Response('Not found', { status: 404 });
       }
     } catch (error) {
       console.error('StreamProcessor error:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
@@ -63,15 +60,15 @@ export class StreamProcessor implements DurableObject {
       case 'financial':
         graphDefinition = templates.financial.createAnomalyDetector(config);
         break;
-      
+
       case 'spending':
         graphDefinition = templates.financial.createSpendingMonitor(config);
         break;
-      
+
       case 'custom':
         graphDefinition = this.createCustomGraph(config);
         break;
-      
+
       default:
         return new Response('Invalid graph type', { status: 400 });
     }
@@ -92,7 +89,7 @@ export class StreamProcessor implements DurableObject {
     return Response.json({
       status: 'started',
       graphId: graphDefinition.id,
-      type
+      type,
     });
   }
 
@@ -102,16 +99,16 @@ export class StreamProcessor implements DurableObject {
     }
 
     await this.graph.stop();
-    
+
     // Save final state
     await saveGraphState(this.storage, this.graph.getState());
-    
+
     const metrics = this.graph.getMetrics();
     this.graph = undefined;
 
     return Response.json({
       status: 'stopped',
-      finalMetrics: metrics
+      finalMetrics: metrics,
     });
   }
 
@@ -121,13 +118,13 @@ export class StreamProcessor implements DurableObject {
     }
 
     const { nodeId = 'input', data } = await request.json();
-    
+
     await this.graph.inject(nodeId, data);
 
     return Response.json({
       status: 'injected',
       nodeId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -137,7 +134,7 @@ export class StreamProcessor implements DurableObject {
     }
 
     const metrics = this.graph.getMetrics();
-    
+
     return Response.json(metrics);
   }
 
@@ -145,7 +142,7 @@ export class StreamProcessor implements DurableObject {
     const status = {
       running: !!this.graph,
       state: this.graph?.getState().status || 'idle',
-      metrics: this.graph?.getMetrics() || null
+      metrics: this.graph?.getMetrics() || null,
     };
 
     return Response.json(status);
@@ -169,13 +166,13 @@ export class StreamProcessor implements DurableObject {
     // Listen for specific node outputs (e.g., alerts)
     this.graph.subscribe('alerts', async (packet) => {
       console.log('Alert triggered:', packet.data);
-      
+
       // Send to external service
       if (this.env.ALERT_WEBHOOK_URL) {
         await fetch(this.env.ALERT_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(packet.data)
+          body: JSON.stringify(packet.data),
         });
       }
     });
@@ -186,26 +183,28 @@ export class StreamProcessor implements DurableObject {
       .description('User-defined graph')
       .nodes(
         nodes.manual('input'),
-        
+
         nodes.transform('process', {
-          function: config.transformFunction || 'return data;'
+          function: config.transformFunction || 'return data;',
         }),
-        
+
         nodes.filter('filter', {
-          function: config.filterFunction || 'return true;'
+          function: config.filterFunction || 'return true;',
         }),
-        
+
         nodes.aggregate('aggregate', {
           window: 'count',
           size: config.windowSize || 10,
-          function: config.aggregateFunction || `
+          function:
+            config.aggregateFunction ||
+            `
             return {
               count: packets.length,
               timestamp: Date.now()
             };
-          `
+          `,
         }),
-        
+
         nodes.log('output')
       )
       .flow('input', 'process', 'filter', 'aggregate', 'output')
@@ -218,7 +217,7 @@ export class StreamProcessor implements DurableObject {
       // Perform periodic maintenance
       const state = this.graph.getState();
       await saveGraphState(this.storage, state);
-      
+
       // Schedule next alarm
       this.state.storage.setAlarm(Date.now() + 60000); // Every minute
     }
@@ -229,16 +228,16 @@ export class StreamProcessor implements DurableObject {
 export default {
   async fetch(request: Request, env: any): Promise<Response> {
     const url = new URL(request.url);
-    
+
     // Route to Durable Object
     if (url.pathname.startsWith('/stream')) {
       const id = env.STREAM_PROCESSOR.idFromName('default');
       const stub = env.STREAM_PROCESSOR.get(id);
-      
+
       // Remove /stream prefix and forward
       const newUrl = new URL(request.url);
       newUrl.pathname = newUrl.pathname.replace('/stream', '');
-      
+
       return stub.fetch(newUrl, request);
     }
 
@@ -248,7 +247,7 @@ export default {
     }
 
     return new Response('Streamflow Worker', {
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
-  }
+  },
 };

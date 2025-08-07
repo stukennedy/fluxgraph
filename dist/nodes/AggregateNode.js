@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode';
+import { BaseNode } from '@/nodes/BaseNode';
 /**
  * Aggregate node - aggregates data packets over windows
  */
@@ -81,8 +81,8 @@ export class AggregateNode extends BaseNode {
                     windowSize: this.config.windowSize,
                     packetCount: this.buffer.length,
                     windowStart: this.windowStartTime,
-                    windowEnd: Date.now()
-                }
+                    windowEnd: Date.now(),
+                },
             };
             // Emit the aggregated packet
             await this.emit(packet);

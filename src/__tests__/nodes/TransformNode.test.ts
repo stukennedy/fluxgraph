@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { TransformNode } from '../../nodes/TransformNode';
-import { DataPacket } from '../../core/types';
+import { TransformNode } from '@/nodes/TransformNode';
+import { DataPacket } from '@/core/types';
 
 describe('TransformNode', () => {
   let node: TransformNode;
@@ -17,7 +17,7 @@ describe('TransformNode', () => {
           timestamp: Date.now()
         }
       `,
-      outputSchema: {}
+      outputSchema: {},
     });
   });
 
@@ -29,11 +29,11 @@ describe('TransformNode', () => {
       const packet: DataPacket = {
         id: 'test-packet',
         timestamp: Date.now(),
-        data: { value: 21 }
+        data: { value: 21 },
       };
 
       const processedPacket = await (node as any).processPacket(packet);
-      
+
       expect(processedPacket).toBeDefined();
       expect(processedPacket.data.doubled).toBe(42);
       expect(processedPacket.data.value).toBe(21);
@@ -57,7 +57,7 @@ describe('TransformNode', () => {
             max: Math.max(...data.numbers)
           }
         `,
-        outputSchema: {}
+        outputSchema: {},
       });
 
       await complexNode.initialize();
@@ -66,11 +66,11 @@ describe('TransformNode', () => {
       const packet: DataPacket = {
         id: 'complex-packet',
         timestamp: Date.now(),
-        data: { numbers: [1, 2, 3, 4, 5] }
+        data: { numbers: [1, 2, 3, 4, 5] },
       };
 
       const result = await (complexNode as any).processPacket(packet);
-      
+
       expect(result.data.sum).toBe(15);
       expect(result.data.average).toBe(3);
       expect(result.data.count).toBe(5);
@@ -92,7 +92,7 @@ describe('TransformNode', () => {
             }, 10);
           });
         `,
-        outputSchema: {}
+        outputSchema: {},
       });
 
       await asyncNode.initialize();
@@ -101,11 +101,11 @@ describe('TransformNode', () => {
       const packet: DataPacket = {
         id: 'async-packet',
         timestamp: Date.now(),
-        data: { value: 'test' }
+        data: { value: 'test' },
       };
 
       const result = await (asyncNode as any).processPacket(packet);
-      
+
       expect(result.data.async).toBe(true);
       expect(result.data.value).toBe('test');
 
@@ -123,7 +123,7 @@ describe('TransformNode', () => {
           }
           return data;
         `,
-        outputSchema: {}
+        outputSchema: {},
       });
 
       await errorNode.initialize();
@@ -132,11 +132,11 @@ describe('TransformNode', () => {
       const packet: DataPacket = {
         id: 'error-packet',
         timestamp: Date.now(),
-        data: { shouldError: true }
+        data: { shouldError: true },
       };
 
       const result = await (errorNode as any).processPacket(packet);
-      
+
       // Should return packet with error property
       expect(result.error).toBeDefined();
       expect(result.error.message).toContain('Transformation error');
@@ -154,12 +154,12 @@ describe('TransformNode', () => {
         data: { value: 10 },
         metadata: {
           source: 'test',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       };
 
       const result = await (node as any).processPacket(packet);
-      
+
       expect(result.metadata).toBeDefined();
       expect(result.metadata.source).toBe('test');
       expect(result.metadata.priority).toBe('high');
@@ -176,7 +176,7 @@ describe('TransformNode', () => {
         type: 'transform',
         name: 'Invalid Transform',
         transformFunction: 'this is not valid javascript {',
-        outputSchema: {}
+        outputSchema: {},
       });
 
       await expect(invalidNode.initialize()).rejects.toThrow();
@@ -193,7 +193,7 @@ describe('TransformNode', () => {
             hasHighPriority: metadata?.priority === 'high'
           }
         `,
-        outputSchema: {}
+        outputSchema: {},
       });
 
       await metadataNode.initialize();
@@ -203,11 +203,11 @@ describe('TransformNode', () => {
         id: 'test-packet',
         timestamp: Date.now(),
         data: { value: 1 },
-        metadata: { priority: 'high' }
+        metadata: { priority: 'high' },
       };
 
       const result = await (metadataNode as any).processPacket(packet);
-      
+
       expect(result.data.hasHighPriority).toBe(true);
 
       await metadataNode.stop();

@@ -1,12 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-  validateGraphDefinition,
-  validateNodeConfig,
-  validateDataPacket,
-  validateFunctionSyntax,
-  hasCycles
-} from '../../utils/validation';
-import { GraphDefinition } from '../../core/types';
+import { validateGraphDefinition, validateNodeConfig, validateDataPacket, validateFunctionSyntax, hasCycles } from '@/utils/validation';
+import { GraphDefinition } from '@/core/types';
 
 describe('validation utils', () => {
   describe('validateGraphDefinition', () => {
@@ -21,19 +15,17 @@ describe('validation utils', () => {
             type: 'source',
             name: 'Source Node',
             sourceType: 'manual',
-            config: {}
+            config: {},
           },
           {
             id: 'node2',
             type: 'sink',
             name: 'Sink Node',
             sinkType: 'log',
-            config: {}
-          }
+            config: {},
+          },
         ],
-        edges: [
-          { id: 'edge1', from: 'node1', to: 'node2' }
-        ]
+        edges: [{ id: 'edge1', from: 'node1', to: 'node2' }],
       };
 
       const result = validateGraphDefinition(validGraph);
@@ -44,7 +36,7 @@ describe('validation utils', () => {
     it('should detect missing required fields', () => {
       const invalidGraph = {
         nodes: [],
-        edges: []
+        edges: [],
       } as any;
 
       const result = validateGraphDefinition(invalidGraph);
@@ -64,17 +56,17 @@ describe('validation utils', () => {
             type: 'source',
             name: 'Node 1',
             sourceType: 'manual',
-            config: {}
+            config: {},
           },
           {
             id: 'node1', // Duplicate ID
             type: 'sink',
             name: 'Node 2',
             sinkType: 'log',
-            config: {}
-          }
+            config: {},
+          },
         ],
-        edges: []
+        edges: [],
       };
 
       const result = validateGraphDefinition(duplicateGraph);
@@ -93,12 +85,10 @@ describe('validation utils', () => {
             type: 'source',
             name: 'Node 1',
             sourceType: 'manual',
-            config: {}
-          }
+            config: {},
+          },
         ],
-        edges: [
-          { id: 'edge1', from: 'node1', to: 'nonexistent' }
-        ]
+        edges: [{ id: 'edge1', from: 'node1', to: 'nonexistent' }],
       };
 
       const result = validateGraphDefinition(invalidEdgeGraph);
@@ -116,13 +106,13 @@ describe('validation utils', () => {
         nodes: [
           { id: 'A', type: 'transform', name: 'A', transformFunction: '', outputSchema: {} },
           { id: 'B', type: 'transform', name: 'B', transformFunction: '', outputSchema: {} },
-          { id: 'C', type: 'transform', name: 'C', transformFunction: '', outputSchema: {} }
+          { id: 'C', type: 'transform', name: 'C', transformFunction: '', outputSchema: {} },
         ],
         edges: [
           { id: 'e1', from: 'A', to: 'B' },
           { id: 'e2', from: 'B', to: 'C' },
-          { id: 'e3', from: 'C', to: 'A' } // Creates cycle
-        ]
+          { id: 'e3', from: 'C', to: 'A' }, // Creates cycle
+        ],
       };
 
       expect(hasCycles(cyclicGraph)).toBe(true);
@@ -136,13 +126,13 @@ describe('validation utils', () => {
         nodes: [
           { id: 'A', type: 'transform', name: 'A', transformFunction: '', outputSchema: {} },
           { id: 'B', type: 'transform', name: 'B', transformFunction: '', outputSchema: {} },
-          { id: 'C', type: 'transform', name: 'C', transformFunction: '', outputSchema: {} }
+          { id: 'C', type: 'transform', name: 'C', transformFunction: '', outputSchema: {} },
         ],
         edges: [
           { id: 'e1', from: 'A', to: 'B' },
           { id: 'e2', from: 'A', to: 'C' },
-          { id: 'e3', from: 'B', to: 'C' }
-        ]
+          { id: 'e3', from: 'B', to: 'C' },
+        ],
       };
 
       expect(hasCycles(dagGraph)).toBe(false);
@@ -156,7 +146,7 @@ describe('validation utils', () => {
         type: 'source',
         name: 'Source Node',
         sourceType: 'manual',
-        config: {}
+        config: {},
       };
 
       const result = validateNodeConfig(sourceNode as any);
@@ -169,7 +159,7 @@ describe('validation utils', () => {
         type: 'transform',
         name: 'Transform Node',
         transformFunction: 'return data',
-        outputSchema: {}
+        outputSchema: {},
       };
 
       const result = validateNodeConfig(transformNode as any);
@@ -180,7 +170,7 @@ describe('validation utils', () => {
       const invalidTransform = {
         id: 'transform',
         type: 'transform',
-        name: 'Transform Node'
+        name: 'Transform Node',
         // Missing transformFunction
       };
 
@@ -197,7 +187,7 @@ describe('validation utils', () => {
         windowType: 'time',
         windowSize: 1000,
         aggregateFunction: 'return values',
-        emitStrategy: 'onComplete'
+        emitStrategy: 'onComplete',
       };
 
       const result = validateNodeConfig(aggregateNode as any);
@@ -210,7 +200,7 @@ describe('validation utils', () => {
       const packet = {
         id: 'packet-1',
         timestamp: Date.now(),
-        data: { value: 42 }
+        data: { value: 42 },
       };
 
       expect(validateDataPacket(packet)).toBe(true);
@@ -221,11 +211,13 @@ describe('validation utils', () => {
       expect(validateDataPacket(undefined)).toBeFalsy();
       expect(validateDataPacket({})).toBe(false);
       expect(validateDataPacket({ id: 'test' })).toBe(false);
-      expect(validateDataPacket({ 
-        id: 'test', 
-        timestamp: 'not-a-number',
-        data: {} 
-      })).toBe(false);
+      expect(
+        validateDataPacket({
+          id: 'test',
+          timestamp: 'not-a-number',
+          data: {},
+        })
+      ).toBe(false);
     });
 
     it('should accept packets with metadata', () => {
@@ -233,7 +225,7 @@ describe('validation utils', () => {
         id: 'packet-1',
         timestamp: Date.now(),
         data: { value: 42 },
-        metadata: { source: 'test' }
+        metadata: { source: 'test' },
       };
 
       expect(validateDataPacket(packet)).toBe(true);
@@ -246,24 +238,19 @@ describe('validation utils', () => {
         'return data',
         'return { ...data, processed: true }',
         'const x = data.value * 2; return { result: x }',
-        'if (data.value > 0) return data; else return null'
+        'if (data.value > 0) return data; else return null',
       ];
 
-      validFunctions.forEach(fn => {
+      validFunctions.forEach((fn) => {
         const result = validateFunctionSyntax(fn);
         expect(result.valid).toBe(true);
       });
     });
 
     it('should detect invalid function syntax', () => {
-      const invalidFunctions = [
-        'return data {',
-        'this is not javascript',
-        'return (]',
-        'const x = '
-      ];
+      const invalidFunctions = ['return data {', 'this is not javascript', 'return (]', 'const x = '];
 
-      invalidFunctions.forEach(fn => {
+      invalidFunctions.forEach((fn) => {
         const result = validateFunctionSyntax(fn);
         expect(result.valid).toBe(false);
         expect(result.error).toBeDefined();

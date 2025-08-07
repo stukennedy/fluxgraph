@@ -1,4 +1,4 @@
-import { NodeMetrics, GraphContext } from '../core/types';
+import { NodeMetrics, GraphContext } from '@/core/types';
 /**
  * Calculate throughput from metrics
  */

@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { FilterNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { FilterNodeConfig, DataPacket } from '@/core/types';
 /**
  * Filter node - filters data packets based on conditions
  */

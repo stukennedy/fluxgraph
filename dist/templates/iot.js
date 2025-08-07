@@ -1,4 +1,4 @@
-import { js } from "../utils";
+import { js } from "@/utils";
 /**
  * IoT sensor data processing template
  */

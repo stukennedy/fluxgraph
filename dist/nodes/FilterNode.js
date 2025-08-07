@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode';
+import { BaseNode } from '@/nodes/BaseNode';
 /**
  * Filter node - filters data packets based on conditions
  */
@@ -41,8 +41,8 @@ export class FilterNode extends BaseNode {
                     metadata: {
                         ...packet.metadata,
                         filteredBy: this.config.id,
-                        filteredAt: Date.now()
-                    }
+                        filteredAt: Date.now(),
+                    },
                 };
             }
             else {
@@ -59,8 +59,8 @@ export class FilterNode extends BaseNode {
                 metadata: {
                     ...packet.metadata,
                     filterError: this.config.id,
-                    errorAt: Date.now()
-                }
+                    errorAt: Date.now(),
+                },
             };
         }
     }
@@ -133,7 +133,7 @@ export class FilterFunctions {
     static and(conditions) {
         return `
       const conditions = [
-        ${conditions.map(c => `(${c})`).join(',\n        ')}
+        ${conditions.map((c) => `(${c})`).join(',\n        ')}
       ];
       return conditions.every(c => c);
     `;
@@ -144,7 +144,7 @@ export class FilterFunctions {
     static or(conditions) {
         return `
       const conditions = [
-        ${conditions.map(c => `(${c})`).join(',\n        ')}
+        ${conditions.map((c) => `(${c})`).join(',\n        ')}
       ];
       return conditions.some(c => c);
     `;

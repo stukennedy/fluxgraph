@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
 /**
  * RxJS-based Filter node
  */
@@ -16,7 +16,7 @@ export class RxFilterNode extends RxBaseNode {
         }
     }
     createProcessingOperator() {
-        return (source) => source.pipe(mergeMap(packet => {
+        return (source) => source.pipe(mergeMap((packet) => {
             if (!this.filterFn) {
                 throw new Error('Filter function not initialized');
             }

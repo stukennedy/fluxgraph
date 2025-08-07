@@ -1,4 +1,4 @@
-import { GraphDefinition, NodeConfig, DataPacket } from '../core/types';
+import { GraphDefinition, NodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Validate a graph definition
@@ -72,7 +72,7 @@ export function validateGraphDefinition(definition: GraphDefinition): { valid: b
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -81,9 +81,9 @@ export function validateGraphDefinition(definition: GraphDefinition): { valid: b
  */
 export function hasCycles(definition: GraphDefinition): boolean {
   const adjacency: Record<string, string[]> = {};
-  
+
   // Build adjacency list
-  definition.edges.forEach(edge => {
+  definition.edges.forEach((edge) => {
     if (!adjacency[edge.from]) {
       adjacency[edge.from] = [];
     }
@@ -173,7 +173,7 @@ export function validateNodeConfig(config: NodeConfig): { valid: boolean; errors
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -181,13 +181,7 @@ export function validateNodeConfig(config: NodeConfig): { valid: boolean; errors
  * Validate a data packet
  */
 export function validateDataPacket(packet: any): packet is DataPacket {
-  return (
-    packet &&
-    typeof packet === 'object' &&
-    typeof packet.id === 'string' &&
-    typeof packet.timestamp === 'number' &&
-    'data' in packet
-  );
+  return packet && typeof packet === 'object' && typeof packet.id === 'string' && typeof packet.timestamp === 'number' && 'data' in packet;
 }
 
 /**
@@ -198,9 +192,9 @@ export function validateFunctionSyntax(functionString: string): { valid: boolean
     new Function(functionString);
     return { valid: true };
   } catch (error) {
-    return { 
-      valid: false, 
-      error: error instanceof Error ? error.message : 'Invalid function syntax'
+    return {
+      valid: false,
+      error: error instanceof Error ? error.message : 'Invalid function syntax',
     };
   }
 }
@@ -210,5 +204,5 @@ export const validation = {
   validateNodeConfig,
   validateDataPacket,
   validateFunctionSyntax,
-  hasCycles
+  hasCycles,
 };

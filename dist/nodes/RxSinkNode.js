@@ -1,5 +1,5 @@
 import { tap, map } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
 /**
  * RxJS-based Sink node
  */
@@ -22,9 +22,9 @@ export class RxSinkNode extends RxBaseNode {
                     await fetch(url, {
                         method: this.config.config?.method || 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ data, metadata })
+                        body: JSON.stringify({ data, metadata }),
                     });
                 };
                 break;
@@ -63,7 +63,7 @@ export class RxSinkNode extends RxBaseNode {
             catch (error) {
                 console.error(`Sink error in node ${this.config.id}:`, error);
             }
-        }), map(packet => packet) // Pass through
+        }), map((packet) => packet) // Pass through
         );
     }
     async onStart() { }

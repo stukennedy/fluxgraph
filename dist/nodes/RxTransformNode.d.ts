@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { RxBaseNode } from './RxBaseNode';
-import { TransformNodeConfig, DataPacket } from '../core/types';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { TransformNodeConfig, DataPacket } from '@/core/types';
 /**
  * RxJS-based Transform node
  */

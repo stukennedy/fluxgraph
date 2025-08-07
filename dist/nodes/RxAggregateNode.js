@@ -1,5 +1,5 @@
 import { map, scan, bufferTime, bufferCount } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
 /**
  * RxJS-based Aggregate node
  */
@@ -32,9 +32,9 @@ export class RxAggregateNode extends RxBaseNode {
                     // Keep only last N packets
                     const maxSize = this.config.windowSize || 10;
                     return newAcc.slice(-maxSize);
-                }, []), map(packets => packets.length > 0 ? packets : []));
+                }, []), map((packets) => (packets.length > 0 ? packets : [])));
             }
-            return windowed$.pipe(map(packets => {
+            return windowed$.pipe(map((packets) => {
                 if (packets.length === 0)
                     return null;
                 if (!this.aggregateFn) {
@@ -42,8 +42,8 @@ export class RxAggregateNode extends RxBaseNode {
                 }
                 try {
                     // Extract values and metadata
-                    const values = packets.map(p => p.data);
-                    const metadata = packets.map(p => p.metadata || {});
+                    const values = packets.map((p) => p.data);
+                    const metadata = packets.map((p) => p.metadata || {});
                     // Apply aggregation
                     const aggregatedData = this.aggregateFn(values, metadata);
                     // Create aggregated packet
@@ -56,8 +56,8 @@ export class RxAggregateNode extends RxBaseNode {
                             aggregatedAt: Date.now(),
                             windowType: this.config.windowType,
                             windowSize: this.config.windowSize,
-                            packetCount: packets.length
-                        }
+                            packetCount: packets.length,
+                        },
                     };
                     return packet;
                 }
@@ -78,7 +78,7 @@ export class RxAggregateNode extends RxBaseNode {
         return this.config.windowSize || 10;
     }
     getBufferDuration() {
-        return this.config.windowType === 'time' ? (this.config.windowSize || 1000) : 1000;
+        return this.config.windowType === 'time' ? this.config.windowSize || 1000 : 1000;
     }
     async onStart() { }
     async onPause() { }

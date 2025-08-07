@@ -1,5 +1,5 @@
-import { GraphDefinition, AnyNodeConfig, GraphEdge, GraphConfig } from './types';
-import { GraphRunner } from './GraphRunner';
+import { GraphDefinition, AnyNodeConfig, GraphEdge, GraphConfig } from '@/core/types';
+import { GraphRunner } from '@/core/GraphRunner';
 
 /**
  * Fluent builder API for creating graphs
@@ -7,7 +7,7 @@ import { GraphRunner } from './GraphRunner';
 export class GraphBuilder {
   private definition: Partial<GraphDefinition> = {
     nodes: [],
-    edges: []
+    edges: [],
   };
 
   constructor(name: string) {
@@ -48,7 +48,7 @@ export class GraphBuilder {
       id: `edge-${this.definition.edges!.length + 1}`,
       from,
       to,
-      condition
+      condition,
     };
     this.definition.edges!.push(edge);
     return this;

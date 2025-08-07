@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { RxBaseNode } from './RxBaseNode';
-import { SourceNodeConfig, DataPacket } from '../core/types';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { SourceNodeConfig, DataPacket } from '@/core/types';
 /**
  * RxJS-based Source node
  */

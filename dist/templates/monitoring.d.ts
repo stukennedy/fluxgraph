@@ -1,4 +1,4 @@
-import { GraphDefinition } from "../core/types";
+import { GraphDefinition } from "@/core/types";
 /**
  * System monitoring and alerting template
  */
@@ -15,8 +15,8 @@ export declare const createMonitoringPipeline: (config?: Partial<GraphDefinition
     name: string;
     description?: string;
     version: string;
-    nodes: import("../core/types").AnyNodeConfig[];
-    edges: import("../core/types").GraphEdge[];
+    nodes: import("@/core/types").AnyNodeConfig[];
+    edges: import("@/core/types").GraphEdge[];
     metadata?: Record<string, any>;
 };
 export default monitoringTemplate;

@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { FilterNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { FilterNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Filter node - filters data packets based on conditions
@@ -41,9 +41,7 @@ export class FilterNode extends BaseNode<FilterNodeConfig> {
 
     try {
       // Apply the filter
-      const shouldPass = await Promise.resolve(
-        this.filterFn(packet.data, packet.metadata)
-      );
+      const shouldPass = await Promise.resolve(this.filterFn(packet.data, packet.metadata));
 
       if (shouldPass) {
         // Add filter metadata and pass through
@@ -52,8 +50,8 @@ export class FilterNode extends BaseNode<FilterNodeConfig> {
           metadata: {
             ...packet.metadata,
             filteredBy: this.config.id,
-            filteredAt: Date.now()
-          }
+            filteredAt: Date.now(),
+          },
         };
       } else {
         // Packet filtered out
@@ -68,8 +66,8 @@ export class FilterNode extends BaseNode<FilterNodeConfig> {
         metadata: {
           ...packet.metadata,
           filterError: this.config.id,
-          errorAt: Date.now()
-        }
+          errorAt: Date.now(),
+        },
       };
     }
   }
@@ -148,7 +146,7 @@ export class FilterFunctions {
   static and(conditions: string[]): string {
     return `
       const conditions = [
-        ${conditions.map(c => `(${c})`).join(',\n        ')}
+        ${conditions.map((c) => `(${c})`).join(',\n        ')}
       ];
       return conditions.every(c => c);
     `;
@@ -160,7 +158,7 @@ export class FilterFunctions {
   static or(conditions: string[]): string {
     return `
       const conditions = [
-        ${conditions.map(c => `(${c})`).join(',\n        ')}
+        ${conditions.map((c) => `(${c})`).join(',\n        ')}
       ];
       return conditions.some(c => c);
     `;

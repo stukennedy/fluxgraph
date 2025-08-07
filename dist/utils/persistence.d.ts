@@ -1,4 +1,4 @@
-import { GraphState, GraphDefinition } from '../core/types';
+import { GraphState, GraphDefinition } from '@/core/types';
 /**
  * Persistence utilities for Durable Objects
  */

@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { SourceNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { SourceNodeConfig, DataPacket } from '@/core/types';
 /**
  * Source node - generates data packets from various sources
  */

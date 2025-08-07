@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode';
+import { BaseNode } from '@/nodes/BaseNode';
 /**
  * Transform node - transforms data packets
  */
@@ -46,8 +46,8 @@ export class TransformNode extends BaseNode {
                 metadata: {
                     ...packet.metadata,
                     transformedBy: this.config.id,
-                    transformedAt: Date.now()
-                }
+                    transformedAt: Date.now(),
+                },
             };
         }
         catch (error) {
@@ -58,8 +58,8 @@ export class TransformNode extends BaseNode {
                 metadata: {
                     ...packet.metadata,
                     errorNode: this.config.id,
-                    errorAt: Date.now()
-                }
+                    errorAt: Date.now(),
+                },
             };
         }
     }

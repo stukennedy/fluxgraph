@@ -18,7 +18,7 @@ export class BaseNode {
             packetsDropped: 0,
             packetsErrored: 0,
             averageLatency: 0,
-            lastProcessedAt: undefined
+            lastProcessedAt: undefined,
         };
     }
     /**
@@ -129,7 +129,7 @@ export class BaseNode {
     async emit(packet) {
         this.metrics.packetsOut++;
         // Notify all subscribers
-        const promises = Array.from(this.subscribers).map(subscriber => {
+        const promises = Array.from(this.subscribers).map((subscriber) => {
             try {
                 return Promise.resolve(subscriber(packet));
             }

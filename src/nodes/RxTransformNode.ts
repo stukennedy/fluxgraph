@@ -1,7 +1,7 @@
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { RxBaseNode } from './RxBaseNode';
-import { TransformNodeConfig, DataPacket } from '../core/types';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { RxBaseNode } from '@/nodes/RxBaseNode';
+import { TransformNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * RxJS-based Transform node
@@ -18,55 +18,52 @@ export class RxTransformNode extends RxBaseNode<TransformNodeConfig> {
     }
   }
 
-  protected createProcessingOperator(): (
-    source: Observable<DataPacket>
-  ) => Observable<DataPacket | null> {
-    return (source) => source.pipe(
-      map(async (packet) => {
-        if (!this.transformFn) {
-          throw new Error('Transform function not initialized');
-        }
+  protected createProcessingOperator(): (source: Observable<DataPacket>) => Observable<DataPacket | null> {
+    return (source) =>
+      source.pipe(
+        map(async (packet) => {
+          if (!this.transformFn) {
+            throw new Error('Transform function not initialized');
+          }
 
-        const startTime = Date.now();
-        
-        try {
-          // Apply the transformation
-          const transformedData = await Promise.resolve(
-            this.transformFn(packet.data, packet.metadata)
-          );
+          const startTime = Date.now();
 
-          // Update latency metric
-          const latency = Date.now() - startTime;
-          this.updateLatencyMetric(latency);
+          try {
+            // Apply the transformation
+            const transformedData = await Promise.resolve(this.transformFn(packet.data, packet.metadata));
 
-          // Return transformed packet
-          return {
-            ...packet,
-            data: transformedData,
-            metadata: {
-              ...packet.metadata,
-              transformedBy: this.config.id,
-              transformedAt: Date.now()
-            }
-          };
-        } catch (error) {
-          // Add error to packet and pass it through
-          return {
-            ...packet,
-            error: error as Error,
-            metadata: {
-              ...packet.metadata,
-              errorNode: this.config.id,
-              errorAt: Date.now()
-            }
-          };
-        }
-      }),
-      
-      // Flatten the promise
-      map(promise => from(promise)),
-      concatAll()
-    );
+            // Update latency metric
+            const latency = Date.now() - startTime;
+            this.updateLatencyMetric(latency);
+
+            // Return transformed packet
+            return {
+              ...packet,
+              data: transformedData,
+              metadata: {
+                ...packet.metadata,
+                transformedBy: this.config.id,
+                transformedAt: Date.now(),
+              },
+            };
+          } catch (error) {
+            // Add error to packet and pass it through
+            return {
+              ...packet,
+              error: error as Error,
+              metadata: {
+                ...packet.metadata,
+                errorNode: this.config.id,
+                errorAt: Date.now(),
+              },
+            };
+          }
+        }),
+
+        // Flatten the promise
+        map((promise) => from(promise)),
+        concatAll()
+      );
   }
 
   private updateLatencyMetric(latency: number): void {

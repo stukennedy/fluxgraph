@@ -1,5 +1,5 @@
-import { GraphDefinition, AnyNodeConfig, GraphConfig } from './types';
-import { GraphRunner } from './GraphRunner';
+import { GraphDefinition, AnyNodeConfig, GraphConfig } from '@/core/types';
+import { GraphRunner } from '@/core/GraphRunner';
 /**
  * Fluent builder API for creating graphs
  */

@@ -100,14 +100,16 @@ export async function restoreCheckpoint(storage, graphId, checkpointId) {
  */
 export async function listCheckpoints(storage, graphId) {
     const keys = await storage.list(`graph:${graphId}:checkpoint:`);
-    return keys.map(key => {
+    return keys
+        .map((key) => {
         const match = key.match(/checkpoint:(\d+)-(.+)$/);
         if (match) {
             return {
                 id: `${match[1]}-${match[2]}`,
-                timestamp: parseInt(match[1])
+                timestamp: parseInt(match[1]),
             };
         }
         return null;
-    }).filter(Boolean);
+    })
+        .filter(Boolean);
 }

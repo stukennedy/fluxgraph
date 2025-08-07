@@ -1,4 +1,4 @@
-import { GraphDefinition, NodeConfig, DataPacket } from '../core/types';
+import { GraphDefinition, NodeConfig, DataPacket } from '@/core/types';
 /**
  * Validate a graph definition
  */

@@ -1,28 +1,28 @@
-import { GraphDefinition } from "../core/types";
-import { js } from "../utils";
+import { GraphDefinition } from '@/core/types';
+import { js } from '@/utils';
 
 /**
  * IoT sensor data processing template
  */
 export const iotTemplate: GraphDefinition = {
-  id: "iot-pipeline",
-  name: "IoT Sensor Pipeline",
-  version: "1.0.0",
-  description: "Process and analyze IoT sensor data streams",
+  id: 'iot-pipeline',
+  name: 'IoT Sensor Pipeline',
+  version: '1.0.0',
+  description: 'Process and analyze IoT sensor data streams',
   nodes: [
     {
-      id: "sensor-input",
-      type: "source",
-      name: "Sensor Data Stream",
-      sourceType: "websocket",
+      id: 'sensor-input',
+      type: 'source',
+      name: 'Sensor Data Stream',
+      sourceType: 'websocket',
       config: {
-        url: "wss://iot-gateway.example.com/sensors"
-      }
+        url: 'wss://iot-gateway.example.com/sensors',
+      },
     },
     {
-      id: "parse",
-      type: "transform",
-      name: "Parse Sensor Data",
+      id: 'parse',
+      type: 'transform',
+      name: 'Parse Sensor Data',
       transformFunction: js`
         // Parse sensor data format
         if (typeof data === 'string') {
@@ -35,28 +35,28 @@ export const iotTemplate: GraphDefinition = {
         return data;
       `,
       outputSchema: {
-        sensorId: "string",
-        temperature: "number",
-        humidity: "number",
-        pressure: "number",
-        timestamp: "number"
-      }
+        sensorId: 'string',
+        temperature: 'number',
+        humidity: 'number',
+        pressure: 'number',
+        timestamp: 'number',
+      },
     },
     {
-      id: "validate-range",
-      type: "filter",
-      name: "Validate Sensor Ranges",
+      id: 'validate-range',
+      type: 'filter',
+      name: 'Validate Sensor Ranges',
       filterFunction: js`
         // Filter out invalid sensor readings
         return data.temperature > -50 && data.temperature < 150 &&
                data.humidity >= 0 && data.humidity <= 100 &&
                data.pressure > 800 && data.pressure < 1200;
-      `
+      `,
     },
     {
-      id: "detect-anomalies",
-      type: "transform",
-      name: "Anomaly Detection",
+      id: 'detect-anomalies',
+      type: 'transform',
+      name: 'Anomaly Detection',
       transformFunction: js`
         // Simple threshold-based anomaly detection
         const anomalies = [];
@@ -79,15 +79,15 @@ export const iotTemplate: GraphDefinition = {
                    anomalies.length === 1 ? 'medium' : 'none'
         };
       `,
-      outputSchema: {}
+      outputSchema: {},
     },
     {
-      id: "aggregate-stats",
-      type: "aggregate",
-      name: "Calculate Statistics",
-      windowType: "time",
+      id: 'aggregate-stats',
+      type: 'aggregate',
+      name: 'Calculate Statistics',
+      windowType: 'time',
       windowSize: 300000, // 5 minute windows
-      emitStrategy: "onComplete",
+      emitStrategy: 'onComplete',
       aggregateFunction: js`
         // Calculate statistics for sensor readings
         const stats = {
@@ -116,58 +116,58 @@ export const iotTemplate: GraphDefinition = {
         };
         
         return stats;
-      `
+      `,
     },
     {
-      id: "alert-anomalies",
-      type: "filter",
-      name: "Filter Anomalies for Alerts",
+      id: 'alert-anomalies',
+      type: 'filter',
+      name: 'Filter Anomalies for Alerts',
       filterFunction: js`
         return data.hasAnomaly && data.severity !== 'none';
-      `
+      `,
     },
     {
-      id: "store-readings",
-      type: "sink",
-      name: "Store Sensor Data",
-      sinkType: "database",
+      id: 'store-readings',
+      type: 'sink',
+      name: 'Store Sensor Data',
+      sinkType: 'database',
       config: {
-        table: "sensor_readings"
-      }
+        table: 'sensor_readings',
+      },
     },
     {
-      id: "send-alerts",
-      type: "sink",
-      name: "Send Alerts",
-      sinkType: "http",
+      id: 'send-alerts',
+      type: 'sink',
+      name: 'Send Alerts',
+      sinkType: 'http',
       config: {
-        url: "https://alerts.example.com/api/notify",
-        method: "POST"
-      }
+        url: 'https://alerts.example.com/api/notify',
+        method: 'POST',
+      },
     },
     {
-      id: "store-stats",
-      type: "sink",
-      name: "Store Statistics",
-      sinkType: "database",
+      id: 'store-stats',
+      type: 'sink',
+      name: 'Store Statistics',
+      sinkType: 'database',
       config: {
-        table: "sensor_statistics"
-      }
-    }
+        table: 'sensor_statistics',
+      },
+    },
   ],
   edges: [
-    { id: "e1", from: "sensor-input", to: "parse" },
-    { id: "e2", from: "parse", to: "validate-range" },
-    { id: "e3", from: "validate-range", to: "detect-anomalies" },
-    { id: "e4", from: "detect-anomalies", to: "aggregate-stats" },
-    { id: "e5", from: "detect-anomalies", to: "alert-anomalies" },
-    { id: "e6", from: "detect-anomalies", to: "store-readings" },
-    { id: "e7", from: "alert-anomalies", to: "send-alerts" },
-    { id: "e8", from: "aggregate-stats", to: "store-stats" }
+    { id: 'e1', from: 'sensor-input', to: 'parse' },
+    { id: 'e2', from: 'parse', to: 'validate-range' },
+    { id: 'e3', from: 'validate-range', to: 'detect-anomalies' },
+    { id: 'e4', from: 'detect-anomalies', to: 'aggregate-stats' },
+    { id: 'e5', from: 'detect-anomalies', to: 'alert-anomalies' },
+    { id: 'e6', from: 'detect-anomalies', to: 'store-readings' },
+    { id: 'e7', from: 'alert-anomalies', to: 'send-alerts' },
+    { id: 'e8', from: 'aggregate-stats', to: 'store-stats' },
   ],
   config: {
-    errorStrategy: "continue"
-  }
+    errorStrategy: 'continue',
+  },
 };
 
 export default iotTemplate;

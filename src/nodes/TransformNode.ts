@@ -1,5 +1,5 @@
-import { BaseNode } from './BaseNode';
-import { TransformNodeConfig, DataPacket } from '../core/types';
+import { BaseNode } from '@/nodes/BaseNode';
+import { TransformNodeConfig, DataPacket } from '@/core/types';
 
 /**
  * Transform node - transforms data packets
@@ -41,9 +41,7 @@ export class TransformNode extends BaseNode<TransformNodeConfig> {
 
     try {
       // Apply the transformation
-      const transformedData = await Promise.resolve(
-        this.transformFn(packet.data, packet.metadata)
-      );
+      const transformedData = await Promise.resolve(this.transformFn(packet.data, packet.metadata));
 
       // Validate against schema if provided
       if (this.config.outputSchema) {
@@ -58,8 +56,8 @@ export class TransformNode extends BaseNode<TransformNodeConfig> {
         metadata: {
           ...packet.metadata,
           transformedBy: this.config.id,
-          transformedAt: Date.now()
-        }
+          transformedAt: Date.now(),
+        },
       };
     } catch (error) {
       // Add error to packet and pass it through
@@ -69,8 +67,8 @@ export class TransformNode extends BaseNode<TransformNodeConfig> {
         metadata: {
           ...packet.metadata,
           errorNode: this.config.id,
-          errorAt: Date.now()
-        }
+          errorAt: Date.now(),
+        },
       };
     }
   }

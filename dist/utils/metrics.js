@@ -40,16 +40,16 @@ export function aggregateNodeMetrics(nodeMetrics) {
         packetsProcessed: acc.packetsProcessed + metrics.packetsIn,
         packetsDropped: acc.packetsDropped + metrics.packetsDropped,
         packetsErrored: acc.packetsErrored + metrics.packetsErrored,
-        totalLatency: acc.totalLatency + (metrics.averageLatency * metrics.packetsIn)
+        totalLatency: acc.totalLatency + metrics.averageLatency * metrics.packetsIn,
     }), {
         packetsProcessed: 0,
         packetsDropped: 0,
         packetsErrored: 0,
-        totalLatency: 0
+        totalLatency: 0,
     });
     return {
         ...aggregated,
-        nodeMetrics
+        nodeMetrics,
     };
 }
 /**
@@ -78,7 +78,7 @@ export function createEmptyMetrics() {
         packetsDropped: 0,
         packetsErrored: 0,
         averageLatency: 0,
-        lastProcessedAt: undefined
+        lastProcessedAt: undefined,
     };
 }
 /**
@@ -88,7 +88,7 @@ export function mergeMetrics(current, update) {
     return {
         ...current,
         ...update,
-        lastProcessedAt: Date.now()
+        lastProcessedAt: Date.now(),
     };
 }
 /**
@@ -147,5 +147,5 @@ export const metrics = {
     createEmptyMetrics,
     mergeMetrics,
     calculateEMA,
-    LatencyTracker
+    LatencyTracker,
 };
