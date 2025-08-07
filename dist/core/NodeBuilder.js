@@ -17,8 +17,8 @@ export class NodeBuilder {
                 url: config.url,
                 interval: config.interval,
                 query: config.query,
-                headers: config.headers
-            }
+                headers: config.headers,
+            },
         };
     }
     /**
@@ -28,7 +28,7 @@ export class NodeBuilder {
         return NodeBuilder.source(id, {
             type: 'websocket',
             url,
-            name: `WebSocket ${id}`
+            name: `WebSocket ${id}`,
         });
     }
     /**
@@ -39,7 +39,7 @@ export class NodeBuilder {
             type: 'http',
             url,
             interval,
-            name: `HTTP ${id}`
+            name: `HTTP ${id}`,
         });
     }
     /**
@@ -49,7 +49,7 @@ export class NodeBuilder {
         return NodeBuilder.source(id, {
             type: 'timer',
             interval,
-            name: `Timer ${id}`
+            name: `Timer ${id}`,
         });
     }
     /**
@@ -58,47 +58,41 @@ export class NodeBuilder {
     static manual(id) {
         return NodeBuilder.source(id, {
             type: 'manual',
-            name: `Manual ${id}`
+            name: `Manual ${id}`,
         });
     }
     /**
      * Create a transform node
      */
     static transform(id, config) {
-        const funcString = typeof config.function === 'function'
-            ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '')
-            : config.function;
+        const funcString = typeof config.function === 'function' ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '') : config.function;
         return {
             id,
             type: 'transform',
             name: config.name || `Transform ${id}`,
             description: config.description,
             transformFunction: funcString,
-            outputSchema: config.outputSchema
+            outputSchema: config.outputSchema,
         };
     }
     /**
      * Create a filter node
      */
     static filter(id, config) {
-        const funcString = typeof config.function === 'function'
-            ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '')
-            : config.function;
+        const funcString = typeof config.function === 'function' ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '') : config.function;
         return {
             id,
             type: 'filter',
             name: config.name || `Filter ${id}`,
             description: config.description,
-            filterFunction: funcString
+            filterFunction: funcString,
         };
     }
     /**
      * Create an aggregate node
      */
     static aggregate(id, config) {
-        const funcString = typeof config.function === 'function'
-            ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '')
-            : config.function;
+        const funcString = typeof config.function === 'function' ? config.function.toString().replace(/^[^{]*{|}[^}]*$/g, '') : config.function;
         return {
             id,
             type: 'aggregate',
@@ -107,7 +101,7 @@ export class NodeBuilder {
             windowType: config.window,
             windowSize: config.window === 'time' ? config.duration : config.size,
             aggregateFunction: funcString,
-            emitStrategy: config.emit || 'onComplete'
+            emitStrategy: config.emit || 'onComplete',
         };
     }
     /**
@@ -124,8 +118,8 @@ export class NodeBuilder {
                 url: config.url,
                 table: config.table,
                 method: config.method,
-                format: config.format || 'json'
-            }
+                format: config.format || 'json',
+            },
         };
     }
     /**
@@ -134,7 +128,7 @@ export class NodeBuilder {
     static log(id) {
         return NodeBuilder.sink(id, {
             type: 'log',
-            name: `Logger ${id}`
+            name: `Logger ${id}`,
         });
     }
     /**
@@ -145,7 +139,7 @@ export class NodeBuilder {
             type: 'http',
             url,
             method,
-            name: `Webhook ${id}`
+            name: `Webhook ${id}`,
         });
     }
     /**

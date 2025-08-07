@@ -29,8 +29,8 @@ export class GraphRunner {
                 packetsDropped: 0,
                 packetsErrored: 0,
                 totalLatency: 0,
-                nodeMetrics: {}
-            }
+                nodeMetrics: {},
+            },
         };
         // Initialize state
         this.state = {
@@ -40,7 +40,7 @@ export class GraphRunner {
             status: 'idle',
             nodeStates: {},
             createdAt: Date.now(),
-            updatedAt: Date.now()
+            updatedAt: Date.now(),
         };
     }
     /**
@@ -57,7 +57,7 @@ export class GraphRunner {
                     nodeId: nodeConfig.id,
                     status: 'idle',
                     buffer: [],
-                    metrics: node.getMetrics()
+                    metrics: node.getMetrics(),
                 };
             }
             // Connect nodes based on edges
@@ -84,7 +84,7 @@ export class GraphRunner {
                 });
             }
             // Initialize all nodes
-            const initPromises = Array.from(this.nodes.values()).map(node => node.initialize());
+            const initPromises = Array.from(this.nodes.values()).map((node) => node.initialize());
             await Promise.all(initPromises);
             // Set up error handlers
             this.nodes.forEach((node, nodeId) => {
@@ -95,7 +95,7 @@ export class GraphRunner {
             this.emitEvent({
                 type: 'graph:started',
                 timestamp: Date.now(),
-                graphId: this.definition.id
+                graphId: this.definition.id,
             });
         }
         catch (error) {
@@ -112,14 +112,14 @@ export class GraphRunner {
         this.state.status = 'running';
         this.state.updatedAt = Date.now();
         // Start all nodes
-        const startPromises = Array.from(this.nodes.values()).map(node => node.start());
+        const startPromises = Array.from(this.nodes.values()).map((node) => node.start());
         await Promise.all(startPromises);
         // Start metrics collection
         this.startMetricsCollection();
         this.emitEvent({
             type: 'graph:started',
             timestamp: Date.now(),
-            graphId: this.definition.id
+            graphId: this.definition.id,
         });
     }
     /**
@@ -131,7 +131,7 @@ export class GraphRunner {
         this.state.status = 'paused';
         this.state.updatedAt = Date.now();
         // Pause all nodes
-        const pausePromises = Array.from(this.nodes.values()).map(node => node.pause());
+        const pausePromises = Array.from(this.nodes.values()).map((node) => node.pause());
         await Promise.all(pausePromises);
         // Stop metrics collection
         this.stopMetricsCollection();
@@ -145,7 +145,7 @@ export class GraphRunner {
         this.state.status = 'running';
         this.state.updatedAt = Date.now();
         // Resume all nodes
-        const resumePromises = Array.from(this.nodes.values()).map(node => node.resume());
+        const resumePromises = Array.from(this.nodes.values()).map((node) => node.resume());
         await Promise.all(resumePromises);
         // Resume metrics collection
         this.startMetricsCollection();
@@ -157,14 +157,14 @@ export class GraphRunner {
         this.state.status = 'stopped';
         this.state.updatedAt = Date.now();
         // Stop all nodes
-        const stopPromises = Array.from(this.nodes.values()).map(node => node.stop());
+        const stopPromises = Array.from(this.nodes.values()).map((node) => node.stop());
         await Promise.all(stopPromises);
         // Stop metrics collection
         this.stopMetricsCollection();
         this.emitEvent({
             type: 'graph:stopped',
             timestamp: Date.now(),
-            graphId: this.definition.id
+            graphId: this.definition.id,
         });
     }
     /**
@@ -205,7 +205,7 @@ export class GraphRunner {
             id: subscriptionId,
             nodeId,
             filter,
-            callback: filteredCallback
+            callback: filteredCallback,
         });
         // Return unsubscribe function
         return subscriptionId;
@@ -241,7 +241,7 @@ export class GraphRunner {
                 nodeId,
                 status: node.getStatus(),
                 buffer: [],
-                metrics: node.getMetrics()
+                metrics: node.getMetrics(),
             };
         });
         return { ...this.state };
@@ -269,7 +269,7 @@ export class GraphRunner {
             packetsDropped: totalPacketsDropped,
             packetsErrored: totalPacketsErrored,
             totalLatency: totalLatency / Math.max(totalPacketsProcessed, 1),
-            nodeMetrics
+            nodeMetrics,
         };
     }
     /**
@@ -325,7 +325,7 @@ export class GraphRunner {
             const transformedData = await Promise.resolve(fn(packet, this.context));
             return {
                 ...packet,
-                data: transformedData
+                data: transformedData,
             };
         }
         catch (error) {
@@ -344,7 +344,7 @@ export class GraphRunner {
             graphId: this.definition.id,
             nodeId,
             packetId: packet?.id,
-            error
+            error,
         });
         // Update metrics
         this.context.metrics.packetsErrored++;
@@ -360,7 +360,7 @@ export class GraphRunner {
     emitEvent(event) {
         const listeners = this.eventListeners.get(event.type);
         if (listeners) {
-            listeners.forEach(listener => {
+            listeners.forEach((listener) => {
                 try {
                     listener(event);
                 }

@@ -1,4 +1,4 @@
-import { GraphDefinition } from "@/core/types";
+import { GraphDefinition } from '@/core/types';
 /**
  * Analytics pipeline template
  * Processes events for real-time analytics

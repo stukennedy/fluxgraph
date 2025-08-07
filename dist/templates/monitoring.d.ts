@@ -1,4 +1,4 @@
-import { GraphDefinition } from "@/core/types";
+import { GraphDefinition } from '@/core/types';
 /**
  * System monitoring and alerting template
  */

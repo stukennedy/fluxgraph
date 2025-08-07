@@ -1,26 +1,26 @@
-import { js } from "@/utils";
+import { js } from '@/utils';
 /**
  * System monitoring and alerting template
  */
 export const monitoringTemplate = {
-    id: "monitoring-pipeline",
-    name: "System Monitoring Pipeline",
-    version: "1.0.0",
-    description: "Monitor system metrics and generate alerts",
+    id: 'monitoring-pipeline',
+    name: 'System Monitoring Pipeline',
+    version: '1.0.0',
+    description: 'Monitor system metrics and generate alerts',
     nodes: [
         {
-            id: "metrics-source",
-            type: "source",
-            name: "Metrics Stream",
-            sourceType: "timer",
+            id: 'metrics-source',
+            type: 'source',
+            name: 'Metrics Stream',
+            sourceType: 'timer',
             config: {
-                interval: 10000 // Collect metrics every 10 seconds
-            }
+                interval: 10000, // Collect metrics every 10 seconds
+            },
         },
         {
-            id: "collect-metrics",
-            type: "transform",
-            name: "Collect System Metrics",
+            id: 'collect-metrics',
+            type: 'transform',
+            name: 'Collect System Metrics',
             transformFunction: js `
         // Simulate collecting system metrics
         return {
@@ -52,12 +52,12 @@ export const monitoringTemplate = {
           }
         };
       `,
-            outputSchema: {}
+            outputSchema: {},
         },
         {
-            id: "check-thresholds",
-            type: "transform",
-            name: "Check Alert Thresholds",
+            id: 'check-thresholds',
+            type: 'transform',
+            name: 'Check Alert Thresholds',
             transformFunction: js `
         const alerts = [];
         
@@ -108,15 +108,15 @@ export const monitoringTemplate = {
           criticalCount: alerts.filter(a => a.severity === 'critical').length
         };
       `,
-            outputSchema: {}
+            outputSchema: {},
         },
         {
-            id: "aggregate-metrics",
-            type: "aggregate",
-            name: "Aggregate Metrics",
-            windowType: "time",
+            id: 'aggregate-metrics',
+            type: 'aggregate',
+            name: 'Aggregate Metrics',
+            windowType: 'time',
             windowSize: 60000, // 1 minute windows
-            emitStrategy: "onComplete",
+            emitStrategy: 'onComplete',
             aggregateFunction: js `
         // Calculate aggregated metrics
         const cpuValues = values.map(v => v.cpu.usage);
@@ -153,63 +153,63 @@ export const monitoringTemplate = {
             critical: values.reduce((sum, v) => sum + (v.criticalCount || 0), 0)
           }
         };
-      `
+      `,
         },
         {
-            id: "filter-alerts",
-            type: "filter",
-            name: "Filter for Alerts",
+            id: 'filter-alerts',
+            type: 'filter',
+            name: 'Filter for Alerts',
             filterFunction: js `
         return data.hasAlerts === true;
-      `
+      `,
         },
         {
-            id: "store-metrics",
-            type: "sink",
-            name: "Store Metrics",
-            sinkType: "database",
+            id: 'store-metrics',
+            type: 'sink',
+            name: 'Store Metrics',
+            sinkType: 'database',
             config: {
-                table: "system_metrics"
-            }
+                table: 'system_metrics',
+            },
         },
         {
-            id: "store-aggregates",
-            type: "sink",
-            name: "Store Aggregated Metrics",
-            sinkType: "database",
+            id: 'store-aggregates',
+            type: 'sink',
+            name: 'Store Aggregated Metrics',
+            sinkType: 'database',
             config: {
-                table: "metrics_aggregates"
-            }
+                table: 'metrics_aggregates',
+            },
         },
         {
-            id: "send-alerts",
-            type: "sink",
-            name: "Send Alert Notifications",
-            sinkType: "http",
+            id: 'send-alerts',
+            type: 'sink',
+            name: 'Send Alert Notifications',
+            sinkType: 'http',
             config: {
-                url: "https://alerts.example.com/api/system",
-                method: "POST"
-            }
-        }
+                url: 'https://alerts.example.com/api/system',
+                method: 'POST',
+            },
+        },
     ],
     edges: [
-        { id: "e1", from: "metrics-source", to: "collect-metrics" },
-        { id: "e2", from: "collect-metrics", to: "check-thresholds" },
-        { id: "e3", from: "check-thresholds", to: "aggregate-metrics" },
-        { id: "e4", from: "check-thresholds", to: "filter-alerts" },
-        { id: "e5", from: "check-thresholds", to: "store-metrics" },
-        { id: "e6", from: "aggregate-metrics", to: "store-aggregates" },
-        { id: "e7", from: "filter-alerts", to: "send-alerts" }
+        { id: 'e1', from: 'metrics-source', to: 'collect-metrics' },
+        { id: 'e2', from: 'collect-metrics', to: 'check-thresholds' },
+        { id: 'e3', from: 'check-thresholds', to: 'aggregate-metrics' },
+        { id: 'e4', from: 'check-thresholds', to: 'filter-alerts' },
+        { id: 'e5', from: 'check-thresholds', to: 'store-metrics' },
+        { id: 'e6', from: 'aggregate-metrics', to: 'store-aggregates' },
+        { id: 'e7', from: 'filter-alerts', to: 'send-alerts' },
     ],
     config: {
-        errorStrategy: "continue"
-    }
+        errorStrategy: 'continue',
+    },
 };
 export const createMonitoringPipeline = (config) => ({
     ...monitoringTemplate,
     config: {
         ...monitoringTemplate.config,
-        ...config
-    }
+        ...config,
+    },
 });
 export default monitoringTemplate;

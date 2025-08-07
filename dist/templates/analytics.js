@@ -1,38 +1,38 @@
-import { js } from "@/utils";
+import { js } from '@/utils';
 /**
  * Analytics pipeline template
  * Processes events for real-time analytics
  */
 export const analyticsTemplate = {
-    id: "analytics-pipeline",
-    name: "Analytics Pipeline",
-    version: "1.0.0",
-    description: "Real-time event analytics with aggregation",
+    id: 'analytics-pipeline',
+    name: 'Analytics Pipeline',
+    version: '1.0.0',
+    description: 'Real-time event analytics with aggregation',
     nodes: [
         {
-            id: "event-source",
-            type: "source",
-            name: "Event Stream",
-            sourceType: "http",
+            id: 'event-source',
+            type: 'source',
+            name: 'Event Stream',
+            sourceType: 'http',
             config: {
-                url: "/events"
-            }
+                url: '/events',
+            },
         },
         {
-            id: "validate",
-            type: "filter",
-            name: "Validate Events",
+            id: 'validate',
+            type: 'filter',
+            name: 'Validate Events',
             filterFunction: js `
         return data && 
                data.eventType && 
                data.timestamp && 
                data.userId;
-      `
+      `,
         },
         {
-            id: "enrich",
-            type: "transform",
-            name: "Enrich Event",
+            id: 'enrich',
+            type: 'transform',
+            name: 'Enrich Event',
             transformFunction: js `
         return {
           ...data,
@@ -41,15 +41,15 @@ export const analyticsTemplate = {
           dayOfWeek: new Date(data.timestamp).getDay()
         };
       `,
-            outputSchema: {}
+            outputSchema: {},
         },
         {
-            id: "aggregate-by-type",
-            type: "aggregate",
-            name: "Aggregate by Event Type",
-            windowType: "time",
+            id: 'aggregate-by-type',
+            type: 'aggregate',
+            name: 'Aggregate by Event Type',
+            windowType: 'time',
             windowSize: 60000, // 1 minute windows
-            emitStrategy: "onComplete",
+            emitStrategy: 'onComplete',
             aggregateFunction: js `
         const counts = {};
         values.forEach(event => {
@@ -64,37 +64,37 @@ export const analyticsTemplate = {
           totalEvents: values.length,
           uniqueUsers: new Set(values.map(e => e.userId)).size
         };
-      `
+      `,
         },
         {
-            id: "store",
-            type: "sink",
-            name: "Store Analytics",
-            sinkType: "database",
+            id: 'store',
+            type: 'sink',
+            name: 'Store Analytics',
+            sinkType: 'database',
             config: {
-                table: "analytics_aggregates"
-            }
+                table: 'analytics_aggregates',
+            },
         },
         {
-            id: "dashboard",
-            type: "sink",
-            name: "Dashboard Updates",
-            sinkType: "http",
+            id: 'dashboard',
+            type: 'sink',
+            name: 'Dashboard Updates',
+            sinkType: 'http',
             config: {
-                url: "https://dashboard.example.com/api/updates",
-                method: "POST"
-            }
-        }
+                url: 'https://dashboard.example.com/api/updates',
+                method: 'POST',
+            },
+        },
     ],
     edges: [
-        { id: "e1", from: "event-source", to: "validate" },
-        { id: "e2", from: "validate", to: "enrich" },
-        { id: "e3", from: "enrich", to: "aggregate-by-type" },
-        { id: "e4", from: "aggregate-by-type", to: "store" },
-        { id: "e5", from: "aggregate-by-type", to: "dashboard" }
+        { id: 'e1', from: 'event-source', to: 'validate' },
+        { id: 'e2', from: 'validate', to: 'enrich' },
+        { id: 'e3', from: 'enrich', to: 'aggregate-by-type' },
+        { id: 'e4', from: 'aggregate-by-type', to: 'store' },
+        { id: 'e5', from: 'aggregate-by-type', to: 'dashboard' },
     ],
     config: {
-        errorStrategy: "continue"
-    }
+        errorStrategy: 'continue',
+    },
 };
 export default analyticsTemplate;

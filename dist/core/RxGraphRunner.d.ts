@@ -1,5 +1,5 @@
-import { Observable } from "rxjs";
-import { GraphDefinition, GraphState, GraphEvent, GraphMetrics, DataPacket } from "./types";
+import { Observable } from 'rxjs';
+import { GraphDefinition, GraphState, GraphEvent, GraphMetrics, DataPacket } from './types';
 /**
  * RxJS-based Graph Runner
  * Uses Observable streams for reactive graph processing

@@ -5,7 +5,7 @@ import { GraphRunner } from '@/core/GraphRunner';
 export class GraphBuilder {
     definition = {
         nodes: [],
-        edges: []
+        edges: [],
     };
     constructor(name) {
         this.definition.name = name;
@@ -41,7 +41,7 @@ export class GraphBuilder {
             id: `edge-${this.definition.edges.length + 1}`,
             from,
             to,
-            condition
+            condition,
         };
         this.definition.edges.push(edge);
         return this;
