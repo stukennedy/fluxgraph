@@ -72,6 +72,7 @@ export interface SinkNodeConfig extends NodeConfig {
     table?: string; // for database sinks
     method?: string; // for HTTP sinks
     format?: 'json' | 'text' | 'binary';
+    callback?: (packet: DataPacket) => void | Promise<void>; // for custom sinks
   };
 }
 
@@ -139,13 +140,13 @@ export interface RouterNodeConfig extends NodeConfig {
 }
 
 // Union type for all node configs
-export type AnyNodeConfig = 
-  | SourceNodeConfig 
-  | TransformNodeConfig 
-  | FilterNodeConfig 
-  | AggregateNodeConfig 
-  | SinkNodeConfig 
-  | MergeNodeConfig 
+export type AnyNodeConfig =
+  | SourceNodeConfig
+  | TransformNodeConfig
+  | FilterNodeConfig
+  | AggregateNodeConfig
+  | SinkNodeConfig
+  | MergeNodeConfig
   | SplitNodeConfig
   | LLMNodeConfig
   | ToolNodeConfig

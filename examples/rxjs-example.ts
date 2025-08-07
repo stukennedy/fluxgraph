@@ -24,7 +24,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
-import { RxGraphRunner } from '@fluxgraph/core';
+import { Graph as GraphRunner } from '@fluxgraph/core';
 
 /**
  * Example 1: Real-time Financial Transaction Processing
@@ -274,7 +274,7 @@ export function stateManagementExample() {
  * Example 6: Using RxGraphRunner with RxJS Operators
  */
 export async function graphRunnerExample() {
-  const graph = new RxGraphRunner({
+  const graph = new GraphRunner({
     id: 'rx-example',
     name: 'RxJS Example Graph',
     version: '1.0.0',
@@ -319,16 +319,16 @@ export async function graphRunnerExample() {
 
   // Subscribe to graph output
   const output$ = graph.observe('output').pipe(
-    map((packet) => packet.data),
+    map((packet: any) => packet.data),
     scan((acc, data) => [...acc, data], [] as any[]),
-    tap((results) => console.log('Results so far:', results.length))
+    tap((results: any[]) => console.log('Results so far:', results.length))
   );
 
-  // Combine with metrics
-  const monitoring$ = combineLatest([output$, graph.getMetrics$()]).pipe(
-    map(([results, metrics]) => ({
+  // Monitor output with metrics
+  const monitoring$ = output$.pipe(
+    map((results: any[]) => ({
       resultsCount: results.length,
-      metrics,
+      metrics: graph.getMetrics(),
     }))
   );
 
@@ -399,7 +399,7 @@ export function circuitBreakerExample() {
 }
 
 // Run examples
-if (typeof window === 'undefined') {
+if (typeof globalThis !== 'undefined') {
   console.log('Running RxJS Streamflow Examples...');
 
   // Example 1: Financial Processing

@@ -7,6 +7,7 @@
 // Core exports
 export { GraphRunner as Graph } from '@/core/GraphRunner';
 export * from '@/core/types';
+export type { GraphDefinition } from '@/core/types';
 
 // Node exports
 export { BaseNode } from '@/nodes/BaseNode';

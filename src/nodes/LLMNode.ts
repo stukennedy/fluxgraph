@@ -81,6 +81,8 @@ export class LLMNode extends BaseNode {
         },
       };
     } catch (error) {
+      console.error('LLM Node error:', error);
+
       if (this.config.retryOnError) {
         // Retry logic
         await this.delay(1000);
@@ -90,6 +92,10 @@ export class LLMNode extends BaseNode {
       return {
         ...packet,
         error: error as Error,
+        data: {
+          ...packet.data,
+          error: error instanceof Error ? error.message : String(error),
+        },
         metadata: {
           ...packet.metadata,
           errorNode: this.config.id,

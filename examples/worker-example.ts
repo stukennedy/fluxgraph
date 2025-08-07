@@ -3,18 +3,18 @@
  */
 
 import { Graph, GraphBuilder, nodes, templates } from '@fluxgraph/core';
-import { DurableObjectStorage, saveGraphState } from '@fluxgraph/core/utils';
+import { DurableObjectStorageAdapter, saveGraphState } from '@fluxgraph/core/utils';
 
 // Durable Object for stream processing
 export class StreamProcessor implements DurableObject {
   private graph?: Graph;
-  private storage: DurableObjectStorage;
+  private storage: DurableObjectStorageAdapter;
 
   constructor(
     private state: DurableObjectState,
     private env: any
   ) {
-    this.storage = new DurableObjectStorage(state.storage);
+    this.storage = new DurableObjectStorageAdapter(state.storage);
   }
 
   async fetch(request: Request): Promise<Response> {

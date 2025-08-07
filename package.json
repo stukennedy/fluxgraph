@@ -22,7 +22,13 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "publish:patch": "npm version patch && npm publish --access public",
     "publish:minor": "npm version minor && npm publish --access public",
-    "publish:major": "npm version major && npm publish --access public"
+    "publish:major": "npm version major && npm publish --access public",
+    "example:chatbot": "bun run examples/ai/chatbot-with-memory.ts",
+    "example:rag": "bun run examples/ai/rag-pipeline.ts",
+    "example:react": "bun run examples/ai/react-agent.ts",
+    "example:multi-agent": "bun run examples/ai/multi-agent-system.ts",
+    "example:tools": "bun run examples/ai/tool-calling.ts",
+    "examples": "bun run examples/run-all.ts"
   },
   "keywords": [
     "fluxgraph",
