@@ -2,7 +2,7 @@
  * Graph Runner Type Definitions
  * Defines the core types for the real-time streaming graph processing system
  */
-export type NodeType = 'source' | 'transform' | 'filter' | 'aggregate' | 'sink' | 'merge' | 'split';
+export type NodeType = 'source' | 'transform' | 'filter' | 'aggregate' | 'sink' | 'merge' | 'split' | 'llm' | 'tool' | 'memory' | 'router';
 export type NodeStatus = 'idle' | 'running' | 'paused' | 'error' | 'completed';
 export interface DataPacket<T = any> {
     id: string;
@@ -65,7 +65,49 @@ export interface SplitNodeConfig extends NodeConfig {
     type: 'split';
     splitFunction: string;
 }
-export type AnyNodeConfig = SourceNodeConfig | TransformNodeConfig | FilterNodeConfig | AggregateNodeConfig | SinkNodeConfig | MergeNodeConfig | SplitNodeConfig;
+export interface LLMNodeConfig extends NodeConfig {
+    type: 'llm';
+    model: string;
+    apiKey?: string;
+    apiEndpoint?: string;
+    temperature?: number;
+    maxTokens?: number;
+    systemPrompt?: string;
+    responseFormat?: 'text' | 'json' | 'tool_call';
+    streaming?: boolean;
+    retryOnError?: boolean;
+}
+export interface ToolNodeConfig extends NodeConfig {
+    type: 'tool';
+    tools: Array<{
+        name: string;
+        description: string;
+        parameters: any;
+        function?: string;
+    }>;
+    parallelExecution?: boolean;
+    maxParallel?: number;
+    sandboxed?: boolean;
+}
+export interface MemoryNodeConfig extends NodeConfig {
+    type: 'memory';
+    memoryType: 'conversation' | 'semantic' | 'summary' | 'hybrid';
+    maxEntries?: number;
+    ttl?: number;
+    embeddingModel?: string;
+    embeddingDimension?: number;
+    summarizationInterval?: number;
+    persistenceAdapter?: any;
+}
+export interface RouterNodeConfig extends NodeConfig {
+    type: 'router';
+    routingFunction: string;
+    routes: Array<{
+        condition: string;
+        target: string;
+    }>;
+}
+export type AnyNodeConfig = SourceNodeConfig | TransformNodeConfig | FilterNodeConfig | AggregateNodeConfig | SinkNodeConfig | MergeNodeConfig | SplitNodeConfig | LLMNodeConfig | ToolNodeConfig | MemoryNodeConfig | RouterNodeConfig;
 export interface GraphEdge {
     id: string;
     from: string;
@@ -89,6 +131,10 @@ export interface GraphConfig {
     bufferStrategy?: 'drop' | 'block' | 'sliding';
     errorStrategy?: 'stop' | 'continue' | 'retry';
     checkpointInterval?: number;
+    allowCycles?: boolean;
+    maxIterations?: number;
+    enableCheckpointing?: boolean;
+    streamingMode?: boolean;
 }
 export interface RetryPolicy {
     maxRetries: number;

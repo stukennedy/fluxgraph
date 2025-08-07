@@ -65,9 +65,9 @@ export function validateGraphDefinition(definition: GraphDefinition): { valid: b
     }
   });
 
-  // Check for cycles (simple detection)
-  if (hasCycles(definition)) {
-    errors.push('Graph contains cycles');
+  // Check for cycles (simple detection) - only if not explicitly allowed
+  if (!definition.config?.allowCycles && hasCycles(definition)) {
+    errors.push('Graph contains cycles (enable allowCycles in config to allow agent loops)');
   }
 
   return {

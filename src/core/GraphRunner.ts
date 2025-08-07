@@ -6,6 +6,9 @@ import { TransformNode } from '@/nodes/TransformNode';
 import { FilterNode } from '@/nodes/FilterNode';
 import { AggregateNode } from '@/nodes/AggregateNode';
 import { SinkNode } from '@/nodes/SinkNode';
+import { LLMNode } from '@/nodes/LLMNode';
+import { ToolNode } from '@/nodes/ToolNode';
+import { MemoryNode } from '@/nodes/MemoryNode';
 
 /**
  * Main GraphRunner class
@@ -351,6 +354,12 @@ export class GraphRunner {
         return new AggregateNode(config);
       case 'sink':
         return new SinkNode(config);
+      case 'llm':
+        return new LLMNode(config as any);
+      case 'tool':
+        return new ToolNode(config as any);
+      case 'memory':
+        return new MemoryNode(config as any);
       default:
         throw new Error(`Unknown node type: ${(config as any).type}`);
     }

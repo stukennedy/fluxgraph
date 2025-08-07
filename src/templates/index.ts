@@ -6,7 +6,9 @@ export * as financial from './financial';
 export * as analytics from './analytics';
 export * as iot from './iot';
 export * as monitoring from './monitoring';
+export * as ai from './ai-agent';
 
 // Re-export common templates at top level
 export { createMonitoringPipeline } from './monitoring';
 export { createAnomalyDetector, createSpendingMonitor } from './financial';
+export { reactAgentTemplate, ragPipelineTemplate, multiAgentTemplate, conversationalAITemplate } from './ai-agent';

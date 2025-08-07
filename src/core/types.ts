@@ -4,7 +4,7 @@
  */
 
 // Node Types
-export type NodeType = 'source' | 'transform' | 'filter' | 'aggregate' | 'sink' | 'merge' | 'split';
+export type NodeType = 'source' | 'transform' | 'filter' | 'aggregate' | 'sink' | 'merge' | 'split' | 'llm' | 'tool' | 'memory' | 'router';
 
 // Node Status
 export type NodeStatus = 'idle' | 'running' | 'paused' | 'error' | 'completed';
@@ -88,8 +88,69 @@ export interface SplitNodeConfig extends NodeConfig {
   splitFunction: string; // Function that returns array of outputs
 }
 
+// LLM node configuration
+export interface LLMNodeConfig extends NodeConfig {
+  type: 'llm';
+  model: string;
+  apiKey?: string;
+  apiEndpoint?: string;
+  temperature?: number;
+  maxTokens?: number;
+  systemPrompt?: string;
+  responseFormat?: 'text' | 'json' | 'tool_call';
+  streaming?: boolean;
+  retryOnError?: boolean;
+}
+
+// Tool node configuration
+export interface ToolNodeConfig extends NodeConfig {
+  type: 'tool';
+  tools: Array<{
+    name: string;
+    description: string;
+    parameters: any;
+    function?: string; // Function code as string
+  }>;
+  parallelExecution?: boolean;
+  maxParallel?: number;
+  sandboxed?: boolean;
+}
+
+// Memory node configuration
+export interface MemoryNodeConfig extends NodeConfig {
+  type: 'memory';
+  memoryType: 'conversation' | 'semantic' | 'summary' | 'hybrid';
+  maxEntries?: number;
+  ttl?: number;
+  embeddingModel?: string;
+  embeddingDimension?: number;
+  summarizationInterval?: number;
+  persistenceAdapter?: any;
+}
+
+// Router node configuration for conditional branching
+export interface RouterNodeConfig extends NodeConfig {
+  type: 'router';
+  routingFunction: string; // Function that returns next node ID
+  routes: Array<{
+    condition: string;
+    target: string;
+  }>;
+}
+
 // Union type for all node configs
-export type AnyNodeConfig = SourceNodeConfig | TransformNodeConfig | FilterNodeConfig | AggregateNodeConfig | SinkNodeConfig | MergeNodeConfig | SplitNodeConfig;
+export type AnyNodeConfig = 
+  | SourceNodeConfig 
+  | TransformNodeConfig 
+  | FilterNodeConfig 
+  | AggregateNodeConfig 
+  | SinkNodeConfig 
+  | MergeNodeConfig 
+  | SplitNodeConfig
+  | LLMNodeConfig
+  | ToolNodeConfig
+  | MemoryNodeConfig
+  | RouterNodeConfig;
 
 // Edge connecting nodes
 export interface GraphEdge {
@@ -119,6 +180,10 @@ export interface GraphConfig {
   bufferStrategy?: 'drop' | 'block' | 'sliding';
   errorStrategy?: 'stop' | 'continue' | 'retry';
   checkpointInterval?: number; // seconds
+  allowCycles?: boolean; // Enable cycles for agent loops
+  maxIterations?: number; // Max iterations for cyclic graphs
+  enableCheckpointing?: boolean; // Enable state checkpointing
+  streamingMode?: boolean; // Enable streaming for LLM responses
 }
 
 // Retry policy

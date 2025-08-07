@@ -16,6 +16,14 @@ export { FilterNode, FilterFunctions } from '@/nodes/FilterNode';
 export { AggregateNode, AggregateFunctions } from '@/nodes/AggregateNode';
 export { SinkNode, SinkConfigurations } from '@/nodes/SinkNode';
 
+// AI Node exports
+export { LLMNode } from '@/nodes/LLMNode';
+export { ToolNode, BuiltInTools } from '@/nodes/ToolNode';
+export { MemoryNode } from '@/nodes/MemoryNode';
+export type { LLMNodeConfig, LLMMessage } from '@/nodes/LLMNode';
+export type { ToolNodeConfig, Tool } from '@/nodes/ToolNode';
+export type { MemoryNodeConfig, MemoryEntry } from '@/nodes/MemoryNode';
+
 // Template exports
 export * as templates from '@/templates';
 

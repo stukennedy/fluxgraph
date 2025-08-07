@@ -13,6 +13,10 @@ export { TransformNode, TransformFunctions } from '@/nodes/TransformNode';
 export { FilterNode, FilterFunctions } from '@/nodes/FilterNode';
 export { AggregateNode, AggregateFunctions } from '@/nodes/AggregateNode';
 export { SinkNode, SinkConfigurations } from '@/nodes/SinkNode';
+// AI Node exports
+export { LLMNode } from '@/nodes/LLMNode';
+export { ToolNode, BuiltInTools } from '@/nodes/ToolNode';
+export { MemoryNode } from '@/nodes/MemoryNode';
 // Template exports
 export * as templates from '@/templates';
 // Utility exports

@@ -1,18 +1,21 @@
 # FluxGraph
 
-🌊 **Real-time graph-based stream processing for Cloudflare Workers and Durable Objects**
+🌊 **Real-time graph-based stream processing and AI orchestration for Cloudflare Workers**
 
-FluxGraph is a lightweight, high-performance stream processing library designed specifically for edge computing environments. Build complex data processing pipelines that run directly on Cloudflare's global network.
+FluxGraph is a lightweight, high-performance stream processing library with built-in AI workflow capabilities, designed specifically for edge computing environments. Build complex data pipelines and AI agents that run directly on Cloudflare's global network - combining the power of LangGraph-style orchestration with real-time stream processing in a package that's 10x smaller than alternatives.
 
 ## Features
 
 - 🚀 **Real-time Processing** - Process data streams with millisecond latency
 - 🔀 **Graph-based Architecture** - Create complex topologies with parallel and conditional paths
+- 🤖 **AI-Native** - Built-in LLM, tool calling, and memory nodes for AI workflows
 - 📊 **Built-in Aggregations** - Time, count, and session-based windowing
 - 🔄 **Backpressure Handling** - Automatic buffering and flow control
 - 🛡️ **Error Resilience** - Retry policies and error recovery strategies
 - 🎯 **Type-safe** - Full TypeScript support with comprehensive types
 - ☁️ **Edge-native** - Optimized for Cloudflare Workers and Durable Objects
+- 🔁 **Agent Loops** - Support for cyclic graphs enabling ReAct and autonomous agents
+- 💾 **State Management** - Built-in memory and checkpointing for long-running workflows
 
 ## Installation
 
@@ -78,6 +81,109 @@ await graph.inject('webhook', { amount: 15000, currency: 'USD' });
 graph.subscribe('alerts', (packet) => {
   console.log('Alert triggered:', packet.data);
 });
+```
+
+## AI Workflows Comparison
+
+FluxGraph now includes powerful AI workflow capabilities, making it a lightweight alternative to popular AI orchestration frameworks:
+
+| Feature | FluxGraph | LangGraph | Pydantic AI | LlamaIndex | CrewAI |
+|---------|-----------|-----------|-------------|------------|--------|
+| **Stream Processing** | ✅ Excellent (RxJS-based) | ✅ Good | ⚠️ Limited | ⚠️ Limited | ❌ No |
+| **Graph Architecture** | ✅ Yes | ✅ Yes | ⚠️ Chain-based | ⚠️ Chain-based | ✅ Yes |
+| **AI-specific Nodes** | ✅ LLM, Tool, Memory | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Agents |
+| **State Management** | ✅ Built-in + Durable Objects | ✅ Built-in | ✅ Built-in | ✅ Built-in | ✅ Yes |
+| **Cycles/Agent Loops** | ✅ Yes (ReAct, etc.) | ✅ Yes | ✅ Yes | ⚠️ Limited | ✅ Yes |
+| **Tool Calling** | ✅ Parallel + Sequential | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Memory Types** | ✅ Conversation, Semantic, Hybrid | ✅ Yes | ⚠️ Basic | ✅ Yes | ✅ Yes |
+| **Checkpointing** | ✅ Yes | ✅ Yes | ✅ Yes | ⚠️ Limited | ⚠️ Limited |
+| **Edge Runtime** | ✅ Cloudflare Workers | ❌ No | ❌ No | ❌ No | ❌ No |
+| **Bundle Size** | ✅ ~179KB | ❌ ~1.7MB | ❌ Python only | ❌ Python only | ❌ Python only |
+| **Streaming LLM** | ✅ Native | ✅ Yes | ⚠️ Limited | ✅ Yes | ⚠️ Limited |
+| **TypeScript** | ✅ First-class | ✅ Yes | ❌ Python | ❌ Python | ❌ Python |
+| **Real-time Data** | ✅ Excellent | ⚠️ Limited | ❌ No | ❌ No | ❌ No |
+| **Production Ready** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes | ⚠️ Beta |
+
+### Why Choose FluxGraph for AI Workflows?
+
+- **🚀 Edge-Native**: Only framework that runs on Cloudflare Workers
+- **⚡ Lightweight**: ~179KB vs 1.7MB for LangGraph (10x smaller)
+- **🌊 Streaming-First**: Built on RxJS for excellent real-time performance
+- **🔧 Flexible**: Combine AI with real-time data processing
+- **💾 Durable**: Native integration with Durable Objects for persistence
+
+## AI Quick Start
+
+### ReAct Agent Example
+```typescript
+import { GraphRunner } from '@fluxgraph/core';
+import { reactAgentTemplate } from '@fluxgraph/core/templates';
+
+// Create an autonomous agent
+const agent = new GraphRunner(reactAgentTemplate);
+await agent.initialize();
+await agent.start();
+
+// Give it a task
+agent.inject('input', { 
+  task: 'Research and summarize the latest AI trends' 
+});
+```
+
+### RAG Pipeline Example
+```typescript
+import { GraphBuilder, LLMNode, MemoryNode } from '@fluxgraph/core';
+
+const ragPipeline = GraphBuilder.create('RAG Pipeline')
+  .nodes(
+    {
+      id: 'vectorDB',
+      type: 'memory',
+      name: 'Vector Store',
+      memoryType: 'semantic',
+      embeddingDimension: 1536
+    },
+    {
+      id: 'llm',
+      type: 'llm',
+      name: 'GPT-4',
+      model: 'gpt-4',
+      systemPrompt: 'Answer based on the provided context.',
+      streaming: true
+    }
+  )
+  .flow('vectorDB', 'llm')
+  .build();
+```
+
+### Multi-Agent Collaboration
+```typescript
+const multiAgent = GraphBuilder.create('Multi-Agent System')
+  .allowCycles() // Enable agent communication loops
+  .nodes(
+    {
+      id: 'coordinator',
+      type: 'llm',
+      name: 'Coordinator',
+      model: 'gpt-4',
+      systemPrompt: 'You coordinate multiple specialist agents.'
+    },
+    {
+      id: 'researcher',
+      type: 'llm',
+      name: 'Research Agent',
+      model: 'gpt-3.5-turbo',
+      systemPrompt: 'You are a research specialist.'
+    },
+    {
+      id: 'analyst',
+      type: 'llm',
+      name: 'Analysis Agent',
+      model: 'gpt-3.5-turbo',
+      systemPrompt: 'You analyze data and provide insights.'
+    }
+  )
+  .build();
 ```
 
 ## Use Cases

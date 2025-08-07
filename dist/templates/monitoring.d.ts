@@ -10,6 +10,10 @@ export declare const createMonitoringPipeline: (config?: Partial<GraphDefinition
         bufferStrategy?: "drop" | "block" | "sliding";
         errorStrategy?: "stop" | "continue" | "retry";
         checkpointInterval?: number;
+        allowCycles?: boolean;
+        maxIterations?: number;
+        enableCheckpointing?: boolean;
+        streamingMode?: boolean;
     };
     id: string;
     name: string;
