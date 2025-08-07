@@ -7,4 +7,6 @@ export * from './validation';
 export * from './persistence';
 export * from './metrics';
 
-export const js = String.raw; // String.raw is a template literal tag that allows for multiline strings
+// Simple js template literal tag for syntax highlighting
+// Note: When using this with transformFunction, be careful with escaping
+export const js = String.raw;

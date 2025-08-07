@@ -49,7 +49,7 @@ const ragPipeline: GraphDefinition = {
       id: 'query-embedder',
       type: 'transform',
       name: 'Query Embedder',
-      transformFunction: `
+      transformFunction: js`
         // In production, use real embedding API
         // For demo, we'll use keyword matching
         const query = data.query.toLowerCase();
@@ -76,7 +76,7 @@ const ragPipeline: GraphDefinition = {
       id: 'retriever',
       type: 'transform',
       name: 'Document Retriever',
-      transformFunction: `
+      transformFunction: js`
         // Sample document database
         const documents = [
           {
@@ -129,7 +129,7 @@ const ragPipeline: GraphDefinition = {
       id: 'context-builder',
       type: 'transform',
       name: 'Context Builder',
-      transformFunction: `
+      transformFunction: js`
         if (!data.retrievedDocuments?.length) {
           return {
             ...data,
@@ -139,10 +139,10 @@ const ragPipeline: GraphDefinition = {
         }
 
         // Build context from retrieved documents
-        const context = data.retrievedDocuments.map((doc) => '[' + doc.title + ']\\n' + doc.content).join('\\n\\n---\\n\\n');
+        const context = data.retrievedDocuments.map((doc) => '[' + doc.title + ']\n' + doc.content).join('\n\n---\n\n');
 
         // Create augmented prompt
-        const prompt = 'Based on the following context, please answer the question.\\n\\nContext:\\n' + context + '\\n\\nQuestion: ' + data.originalQuery + '\\n\\nPlease provide a comprehensive answer based on the provided context. If the context doesn\\'t contain enough information, please indicate what\\'s missing.';
+        const prompt = 'Based on the following context, please answer the question.\n\nContext:\n' + context + '\n\nQuestion: ' + data.originalQuery + '\n\nPlease provide a comprehensive answer based on the provided context. If the context doesn\'t contain enough information, please indicate what\'s missing.';
 
         return {
           ...data,
@@ -156,9 +156,9 @@ const ragPipeline: GraphDefinition = {
       id: 'generator',
       type: 'transform',
       name: 'Mock Answer Generator',
-      transformFunction: `
+      transformFunction: js`
         // Mock LLM response based on context
-        let response = 'I apologize, but I don\\'t have enough information to answer that question.';
+        let response = 'I apologize, but I don\'t have enough information to answer that question.';
         
         if (data.prompt && data.prompt.includes('FluxGraph')) {
           response = 'FluxGraph is a lightweight stream processing library designed for edge computing. It supports real-time data processing with graph-based architectures and includes built-in AI nodes for LLM interactions, tool calling, and memory management.';
@@ -184,7 +184,7 @@ const ragPipeline: GraphDefinition = {
       id: 'response-formatter',
       type: 'transform',
       name: 'Response Formatter',
-      transformFunction: `
+      transformFunction: js`
         return {
           query: data.originalQuery,
           answer: data.response,

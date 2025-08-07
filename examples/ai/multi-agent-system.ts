@@ -6,6 +6,7 @@
  */
 
 import { Graph, GraphDefinition } from '@fluxgraph/core';
+import { js } from '@fluxgraph/core/utils';
 
 const multiAgentSystem: GraphDefinition = {
   id: 'multi-agent-system',
@@ -25,7 +26,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'coordinator',
       type: 'transform',
       name: 'Mock Coordinator Agent',
-      transformFunction: `
+      transformFunction: js`
         // Mock coordinator agent that delegates tasks
         const task = data.originalTask || data.prompt;
         let response = '';
@@ -53,7 +54,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'delegation-router',
       type: 'transform',
       name: 'Delegation Router',
-      transformFunction: `
+      transformFunction: js`
         const response = data.response;
         const delegations = [];
 
@@ -92,7 +93,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'research-agent',
       type: 'transform',
       name: 'Mock Research Specialist',
-      transformFunction: `
+      transformFunction: js`
         // Mock research agent
         const task = data.task || data.originalTask;
         const response = 'Research completed for: ' + task + '. Key findings: This is a comprehensive analysis with multiple data points and insights.';
@@ -110,7 +111,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'code-agent',
       type: 'transform',
       name: 'Mock Code Specialist',
-      transformFunction: `
+      transformFunction: js`
         // Mock code agent
         const task = data.task || data.originalTask;
         const response = 'Code implementation completed for: ' + task + '. The solution includes proper error handling, documentation, and follows best practices.';
@@ -128,7 +129,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'qa-agent',
       type: 'transform',
       name: 'Mock QA Specialist',
-      transformFunction: `
+      transformFunction: js`
         // Mock QA agent
         const task = data.task || data.originalTask;
         const response = 'QA testing completed for: ' + task + '. All tests passed. Quality standards met with recommendations for edge case handling.';
@@ -146,7 +147,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'agent-dispatcher',
       type: 'transform',
       name: 'Agent Dispatcher',
-      transformFunction: `
+      transformFunction: js`
         // Route to appropriate specialist agents based on delegations
         for (const delegation of data.delegations || []) {
           const agentTask = {
@@ -173,7 +174,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'response-aggregator',
       type: 'transform',
       name: 'Response Aggregator',
-      transformFunction: `
+      transformFunction: js`
         const responses = {};
 
         // Collect responses from all agents
@@ -204,7 +205,7 @@ const multiAgentSystem: GraphDefinition = {
       id: 'synthesis-agent',
       type: 'transform',
       name: 'Mock Synthesis Agent',
-      transformFunction: `
+      transformFunction: js`
         // Mock synthesis agent
         const task = data.originalTask;
         const agentResponses = data.agentResponses || {};

@@ -6,6 +6,7 @@
  */
 
 import { Graph, GraphDefinition } from '@fluxgraph/core';
+import { js } from '@fluxgraph/core/utils';
 
 // Define the chatbot graph
 const chatbotGraph: GraphDefinition = {
@@ -28,7 +29,7 @@ const chatbotGraph: GraphDefinition = {
       id: 'llm',
       type: 'transform',
       name: 'Mock AI Assistant',
-      transformFunction: `
+      transformFunction: js`
         // Mock AI responses for testing
         const responses = [
           "Hello Alex! It's great to meet you. I'm excited to help you learn about AI. What specific aspects interest you most?",

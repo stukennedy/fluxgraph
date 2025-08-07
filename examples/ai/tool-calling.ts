@@ -6,6 +6,7 @@
  */
 
 import { Graph, GraphDefinition, Tool } from '@fluxgraph/core';
+import { js } from '@fluxgraph/core/utils';
 
 // Define a comprehensive set of tools
 const tools: Tool[] = [
@@ -200,7 +201,7 @@ const toolCallingGraph: GraphDefinition = {
       id: 'request-analyzer',
       type: 'transform',
       name: 'Mock Request Analyzer',
-      transformFunction: `
+      transformFunction: js`
         // Mock request analyzer that determines which tools to use
         const request = data.originalRequest || data.prompt;
         let toolCalls = [];
@@ -278,7 +279,7 @@ const toolCallingGraph: GraphDefinition = {
       id: 'tool-executor',
       type: 'transform',
       name: 'Mock Tool Executor',
-      transformFunction: `
+      transformFunction: js`
         // Mock tool executor that simulates tool execution
         const toolCalls = data.toolCalls || [];
         const results = [];
@@ -405,7 +406,7 @@ const toolCallingGraph: GraphDefinition = {
       id: 'result-formatter',
       type: 'transform',
       name: 'Result Formatter',
-      transformFunction: `
+      transformFunction: js`
 
         const results = data.toolResults;
 
@@ -447,21 +448,21 @@ const toolCallingGraph: GraphDefinition = {
       id: 'response-generator',
       type: 'transform',
       name: 'Mock Response Generator',
-      transformFunction: `
+      transformFunction: js`
         // Mock response generator that synthesizes tool results
         const request = data.originalRequest;
         const results = data.formattedResults || [];
         
-        let response = 'Tool execution completed successfully!\\n\\n';
+        let response = 'Tool execution completed successfully!\n\n';
         
         if (results.length > 0) {
-          response += 'Results:\\n';
+          response += 'Results:\n';
           results.forEach((result, index) => {
-            response += \`\${index + 1}. \${result.tool}: \${JSON.stringify(result.data, null, 2)}\\n\`;
+            response += (index + 1) + '. ' + result.tool + ': ' + JSON.stringify(result.data, null, 2) + '\n';
           });
         }
         
-        response += '\\nSummary: All requested tools have been executed and results are ready.';
+        response += '\nSummary: All requested tools have been executed and results are ready.';
         
         return {
           ...data,
