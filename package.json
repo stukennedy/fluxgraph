@@ -28,7 +28,9 @@
     "example:react": "bun run examples/ai/react-agent.ts",
     "example:multi-agent": "bun run examples/ai/multi-agent-system.ts",
     "example:tools": "bun run examples/ai/tool-calling.ts",
-    "examples": "bun run examples/run-all.ts"
+    "examples": "bun run examples/run-all.ts",
+    "marble:server": "bun run examples/marble-server-example.ts",
+    "marble:demo": "bun run examples/marble-server-example.ts"
   },
   "keywords": [
     "fluxgraph",
@@ -61,7 +63,8 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "ws-marbles": "^1.0.2"
   },
   "engines": {
     "node": ">=18.0.0"
