@@ -57,7 +57,6 @@ export class MarbleServer {
       name: registration.name,
       description: registration.description,
       observable: registration.observable,
-      theme: registration.theme,
     });
   }
 
@@ -98,7 +97,7 @@ export class MarbleServer {
     this.server = Bun.serve({
       port: this.config.port,
 
-      fetch(req, server) {
+      async fetch(req, server) {
         const url = new URL(req.url);
 
         // Upgrade to WebSocket if requested
@@ -112,7 +111,12 @@ export class MarbleServer {
         // Serve the client JavaScript file
         if (url.pathname === '/ws-marbles-client.js') {
           try {
-            const clientFile = Bun.file('public/ws-marbles-client.js');
+            // Prefer local copied build, fall back to node_modules
+            let clientFile = Bun.file('public/ws-marbles-client.js');
+            const exists = await clientFile.exists();
+            if (!exists) {
+              clientFile = Bun.file('node_modules/ws-marbles/dist/client.mjs');
+            }
             return new Response(clientFile, {
               headers: { 'Content-Type': 'application/javascript' },
             });
@@ -122,7 +126,7 @@ export class MarbleServer {
         }
 
         // Serve a simple HTML page with the marble diagram client
-        return new Response(MarbleServer.getClientHTML(server.port), {
+        return new Response(MarbleServer.getClientHTML(server.port || 3000), {
           headers: { 'Content-Type': 'text/html' },
         });
       },
@@ -315,6 +319,7 @@ export class MarbleServer {
             width: 1200px;
             height: 600px;
             max-width: 100%;
+            padding: 1rem;
         }
         
         .controls {
@@ -424,7 +429,7 @@ export class MarbleServer {
                         console.log('Stream not available yet:', streamId);
                     }
                 });
-            }, 1000);
+            }, 2000);
         }
         
         window.clearCanvas = () => {

@@ -7,7 +7,7 @@
 
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { MarbleServer, createMarbleServer } from './marble-server';
+import { createMarbleServer } from './marble-server';
 
 export interface MarbleVisualizerConfig {
   port?: number;
@@ -27,7 +27,7 @@ export interface MarbleVisualizer {
 
 export function createMarbleVisualizer(config: MarbleVisualizerConfig = {}): MarbleVisualizer {
   const server = createMarbleServer({
-    port: config.port || 8080,
+    port: config.port || 3000,
     host: config.host || 'localhost',
   });
 
@@ -36,7 +36,7 @@ export function createMarbleVisualizer(config: MarbleVisualizerConfig = {}): Mar
   return {
     async connect(): Promise<void> {
       await server.startBunServer();
-      console.log(`✅ Marble visualizer running on http://${config.host || 'localhost'}:${config.port || 8080}`);
+      console.log(`✅ Marble visualizer running on http://${config.host || 'localhost'}:${config.port || 3000}`);
     },
 
     disconnect(): void {
@@ -104,7 +104,14 @@ export function createMarbleVisualizer(config: MarbleVisualizerConfig = {}): Mar
           });
         }
 
-        return source.pipe(tap((value) => subject.next(value)));
+        const currentSubject = subject;
+        return source.pipe(
+          tap({
+            next: (value) => currentSubject.next(value),
+            error: (err) => currentSubject.error(err),
+            complete: () => currentSubject.complete(),
+          })
+        );
       };
     },
   };

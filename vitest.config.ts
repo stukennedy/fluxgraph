@@ -6,6 +6,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
   },
+  esbuild: {
+    target: 'node18',
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

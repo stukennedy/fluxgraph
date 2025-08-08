@@ -1,6 +1,7 @@
 {
   "name": "@fluxgraph/core",
   "version": "0.1.2",
+  "type": "module",
   "description": "Real-time graph-based stream processing for Cloudflare Workers and Durable Objects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -59,6 +60,7 @@
     "@cloudflare/workers-types": "^4.20250807.0",
     "@types/bun": "latest",
     "@types/node": "^20.19.9",
+    "bun-types": "^1.2.19",
     "eslint": "^9.32.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",

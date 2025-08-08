@@ -1,4 +1,4 @@
-# FluxGraph
+# @fluxgraph/core
 
 🌊 **Real-time graph-based stream processing and AI orchestration for Cloudflare Workers**
 

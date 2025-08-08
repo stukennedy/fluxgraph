@@ -17,7 +17,7 @@ import { RxGraphRunner } from '../src/core/RxGraphRunner';
 async function startMarbleServer() {
   // Create marble server
   const marbleServer = createMarbleServer({
-    port: 8080,
+    port: 3000,
     host: 'localhost',
   });
 
